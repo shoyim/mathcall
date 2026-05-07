@@ -57,29 +57,29 @@
 
         <!-- Chart grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-2 mb-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-3">
+                <div class="flex items-center gap-2 mb-3">
                     <span class="w-1 h-4 rounded-full bg-blue-400 shrink-0"></span>
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Профили концентрации C<sub>m</sub> по x</h3>
                 </div>
                 <canvas id="CmChart"></canvas>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-2 mb-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-3">
+                <div class="flex items-center gap-2 mb-3">
                     <span class="w-1 h-4 rounded-full bg-violet-400 shrink-0"></span>
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Профили концентрации C<sub>im</sub> по x</h3>
                 </div>
                 <canvas id="CimChart"></canvas>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-2 mb-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-3">
+                <div class="flex items-center gap-2 mb-3">
                     <span class="w-1 h-4 rounded-full bg-orange-400 shrink-0"></span>
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Динамика C<sub>m</sub> по времени</h3>
                 </div>
                 <canvas id="CmTimeChart"></canvas>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-2 mb-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-3">
+                <div class="flex items-center gap-2 mb-3">
                     <span class="w-1 h-4 rounded-full bg-emerald-400 shrink-0"></span>
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Динамика C<sub>im</sub> по времени</h3>
                 </div>
@@ -143,6 +143,7 @@
             options: {
                 responsive: true,
                 aspectRatio: 1.5,
+                layout: { padding: { left: 0, right: 4, top: 4, bottom: 0 } },
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
                     legend: { labels: { color: '#9ca3af', usePointStyle: true, pointStyle: 'line', boxWidth: 24, padding: 14, font: { size: 11 } } },
