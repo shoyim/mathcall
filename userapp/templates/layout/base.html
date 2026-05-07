@@ -162,12 +162,11 @@
         .img-doc { box-shadow: 0 4px 20px rgba(0,0,0,0.3); border-radius: 8px; }
 
         /* Responsive cube animation */
-        #cube-scale-outer { transform-origin: center center; }
         @media (max-width: 479px) {
-            #cube-scale-outer { transform: scale(0.5); margin: -50px 0; }
+            #cube-scale-outer { zoom: 0.5; }
         }
         @media (min-width: 480px) and (max-width: 639px) {
-            #cube-scale-outer { transform: scale(0.65); margin: -35px 0; }
+            #cube-scale-outer { zoom: 0.65; }
         }
 
         /* Card hover glow */
