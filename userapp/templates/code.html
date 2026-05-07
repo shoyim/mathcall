@@ -1,63 +1,58 @@
-<!-- home/templates/home/code.html -->
 {% extends 'layout/base.html' %}
 
-{% block title %}
-Коды программ
-{% endblock %}
+{% block title %}Python Код{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Питон коды</h2>
-    <!-- Tabs navs -->
-    <ul class="nav nav-pills mb-2" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button"
-                role="tab" aria-controls="tab1" aria-selected="true">Аномальный перенос вещества в двухзонной
-                фрактальной среде</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab"
-                aria-controls="tab2" aria-selected="false">Аномальный перенос с учетом адсорбционных эффектов и
-                разложения вещества</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab"
-                aria-controls="tab3" aria-selected="false">Аномальный перенос с много – членными дробными
-                производными</button>
-        </li>
-    </ul>
-    <!-- Tabs content -->
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-            <pre><code class="python">import numpy as np
+<div class="max-w-5xl mx-auto px-4 py-8">
+
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2" data-i18n="nav_code">Python Код</h1>
+    <p class="text-gray-500 dark:text-gray-400 mb-6">Исходный код численных методов для 3 моделей</p>
+
+    <!-- Tab buttons -->
+    <div class="flex flex-wrap gap-2 mb-6" role="tablist">
+        <button onclick="switchTab('tab1')" id="btn-tab1"
+                class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-blue-600 text-white shadow-md">
+            <span class="hidden sm:inline">Модель 1:</span> Двухзонная
+        </button>
+        <button onclick="switchTab('tab2')" id="btn-tab2"
+                class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">
+            <span class="hidden sm:inline">Модель 2:</span> Адсорбция
+        </button>
+        <button onclick="switchTab('tab3')" id="btn-tab3"
+                class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">
+            <span class="hidden sm:inline">Модель 3:</span> Многочленные
+        </button>
+    </div>
+
+    <!-- Tab 1 -->
+    <div id="tab1" class="tab-pane">
+        <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-xl border border-gray-700">
+            <div class="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <span class="text-xs text-gray-400 font-mono">model1_two_zone_fractal.py</span>
+                <button onclick="copyCode('code1')" class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded transition-colors">
+                    Копировать
+                </button>
+            </div>
+            <pre class="overflow-x-auto"><code id="code1" class="language-python text-sm">import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import gamma
 import csv
 
-C0 = 0.1
-vm = 1e-4
-Dm = 1e-5
-n = 20
-tau = 1
-h = 0.1
-tmax = 2700
-w = 1e-6
-tetim = 0.1
-tetm = 0.4
-gam = 0.06
-tet = tetim / tetm
-alpha = 0.9
-bet = 2
+C0 = 0.1;  vm = 1e-4;  Dm = 1e-5;  n = 20
+tau = 1;   h = 0.1;    tmax = 2700; w = 1e-6
+tetim = 0.1;  tetm = 0.4;  gam = 0.06
+alpha = 0.9;  bet = 2
 A = 1 + (w * gamma(2 - alpha) * tau**alpha) / (gam * tetim)
 
-Cm = np.zeros((tmax + 1, n + 1))
+Cm  = np.zeros((tmax + 1, n + 1))
 Cim = np.zeros((tmax + 1, n + 1))
-Cm2 = np.zeros(tmax + 1)
-Cm3 = np.zeros(tmax + 1)
-Cm4 = np.zeros(tmax + 1)
-Cim2 = np.zeros(tmax + 1)
-Cim3 = np.zeros(tmax + 1)
-Cim4 = np.zeros(tmax + 1)
+Cm2 = np.zeros(tmax + 1);  Cm3 = np.zeros(tmax + 1);  Cm4 = np.zeros(tmax + 1)
+Cim2 = np.zeros(tmax + 1); Cim3 = np.zeros(tmax + 1); Cim4 = np.zeros(tmax + 1)
 
 for k in range(tmax + 1):
     Cm[k, 0] = C0
@@ -66,338 +61,212 @@ for k in range(tmax):
     for i in range(n + 1):
         s1 = 0
         for l1 in range(k):
-            if k > 0:
-                s1 += (Cim[l1 + 1, i] - Cim[l1, i]) * ((k - l1 + 1)**(1 - alpha) - (k - l1)**(1 - alpha))
-        Cim[k + 1, i] = (Cim[k, i] - s1 + (gamma(2 - alpha) * tau**alpha * w) * Cm[k, i] / (gam * tetim)) / A
+            s1 += (Cim[l1+1,i] - Cim[l1,i]) * ((k-l1+1)**(1-alpha) - (k-l1)**(1-alpha))
+        Cim[k+1,i] = (Cim[k,i] - s1 + (gamma(2-alpha)*tau**alpha*w)*Cm[k,i]/(gam*tetim)) / A
 
     for i in range(1, n):
         if bet == 2:
-            s01 = Cm[k, i + 1] - 2 * Cm[k, i] + Cm[k, i - 1]
+            s01 = Cm[k,i+1] - 2*Cm[k,i] + Cm[k,i-1]
         else:
-            s01 = 0
-            for l in range(i):
-                s01 += ((l + 1)**(2 - bet) - (l)**(2 - bet)) * (Cm[k, i + 1 - l] - 2 * Cm[k, i - l] + Cm[k, i - 1 - l])
-        Cm[k + 1, i] = (tau * Dm * s01) / (gamma(3 - bet) * (h**bet)) - tau * vm * (Cm[k, i] - Cm[k, i - 1]) / h - gam * tau * tetim * s1 / (tetm * gamma(2 - alpha) * tau**alpha) * (Cim[k + 1, i] - Cim[k, i]) + Cm[k, i]
-    Cm[k + 1, n] = Cm[k + 1, n - 1]
+            s01 = sum(((l+1)**(2-bet) - l**(2-bet)) *
+                      (Cm[k,i+1-l] - 2*Cm[k,i-l] + Cm[k,i-1-l]) for l in range(i))
+        Cm[k+1,i] = (
+            (tau*Dm*s01)/(gamma(3-bet)*h**bet)
+            - tau*vm*(Cm[k,i] - Cm[k,i-1])/h
+            - gam*tau*tetim*s1/(tetm*gamma(2-alpha)*tau**alpha) * (Cim[k+1,i] - Cim[k,i])
+            + Cm[k,i]
+        )
+    Cm[k+1, n] = Cm[k+1, n-1]
 
-x = [i * h for i in range(n + 1)]
-plt.figure(figsize=(10, 5))
-plt.plot(x, Cm[tmax, : ], label=f'Cm(t={tmax} s)', linewidth=2)
-plt.plot(x, Cm[2*tmax//3, : ], label=f'Cm(t={2*tmax//3} s)', linewidth=2)
-plt.plot(x, Cm[tmax//3, : ], label=f'Cm(t={tmax//3} s)', linewidth=2)
-plt.xlabel('X koordinata (m)', fontsize=12)
-plt.ylabel('Kontsentratsiya (m^3/m^3)', fontsize=12)
-plt.title('Cm ning X koordinata bo\'yicha taqsimoti', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
+x = [i*h for i in range(n+1)]
+y = [k*tau for k in range(tmax+1)]
+for k in range(tmax+1):
+    Cm2[k] = Cm[k,2];  Cm3[k] = Cm[k,3];  Cm4[k] = Cm[k,4]
+    Cim2[k] = Cim[k,2]; Cim3[k] = Cim[k,3]; Cim4[k] = Cim[k,4]
 
-x = [i * h for i in range(n + 1)]
-plt.figure(figsize=(10, 5))
-plt.plot(x, Cim[tmax, :], label=f'Cim(t={tmax} s)', linewidth=2)
-plt.plot(x, Cim[2*tmax//3, : ], label=f'Cim(t={2*tmax//3} s)', linewidth=2)
-plt.plot(x, Cim[tmax//3, : ], label=f'Cim(t={tmax//3} s)', linewidth=2)
-plt.xlabel('X koordinata (m)', fontsize=12)
-plt.ylabel('Kontsentratsiya (m^3/m^3)', fontsize=12)
-plt.title('Cim ning X koordinata bo\'yicha taqsimoti', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
+# Профили по x
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+for ax, data, name in [(axes[0], Cm, 'Cm'), (axes[1], Cim, 'Cim')]:
+    ax.plot(x, data[tmax,:],       label=f'{name}(t={tmax} s)')
+    ax.plot(x, data[2*tmax//3,:],  label=f'{name}(t={2*tmax//3} s)')
+    ax.plot(x, data[tmax//3,:],    label=f'{name}(t={tmax//3} s)')
+    ax.set_xlabel('X (m)');  ax.set_ylabel('Концентрация')
+    ax.legend();  ax.grid(True)
+plt.tight_layout();  plt.show()
 
-y = [k * tau for k in range(tmax + 1)]
-for k in range(tmax + 1):
-    Cm2[k] = Cm[k, 2]
-    Cm3[k] = Cm[k, 3]
-    Cm4[k] = Cm[k, 4]
-    Cim2[k] = Cim[k, 2]
-    Cim3[k] = Cim[k, 3]
-    Cim4[k] = Cim[k, 4]
+# Динамика по времени
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+for ax, d2, d3, d4, name in [(axes[0], Cm2, Cm3, Cm4, 'Cm'), (axes[1], Cim2, Cim3, Cim4, 'Cim')]:
+    ax.plot(y, d2, label=f'{name}(x=0.1)');  ax.plot(y, d3, label=f'{name}(x=0.3)')
+    ax.plot(y, d4, label=f'{name}(x=0.5)');  ax.set_xlabel('t (s)')
+    ax.legend();  ax.grid(True)
+plt.tight_layout();  plt.show()
 
-plt.figure(figsize=(10, 5))
-plt.plot(y, Cm2, label='Cm (x=0.1 m)', linewidth=2)
-plt.plot(y, Cm3, label='Cm (x=0.3 m)', linewidth=2)
-plt.plot(y, Cm4, label='Cm (x=0.5 m)', linewidth=2)
-plt.xlabel('Vaqt (s)', fontsize=12)
-plt.ylabel('Cm kontsentratsiyasi (m^3/m^3)', fontsize=12)
-plt.title('Cm ning vaqt bo\'yicha dinamikasi', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-plt.figure(figsize=(10, 5))
-plt.plot(y, Cim2, label='Cim (x=0.1 m)', linewidth=2)
-plt.plot(y, Cim3, label='Cim (x=0.3 m)', linewidth=2)
-plt.plot(y, Cim4, label='Cim (x=0.5 m)', linewidth=2)
-plt.xlabel('Vaqt (s)', fontsize=12)
-plt.ylabel('Cim kontsentratsiyasi (m^3/m^3)', fontsize=12)
-plt.title('Cim ning vaqt bo\'yicha dinamikasi', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-with open('Cm.csv', mode='w', newline='') as Cmfile:
-    writer = csv.writer(Cmfile, delimiter=';')
-    writer.writerow(list(Cm[tmax, :]))
-
-with open('Cim.csv', mode='w', newline='') as Cimfile:
-    writer = csv.writer(Cimfile, delimiter=';')
-    writer.writerow(list(Cim[tmax, :]))
-
-with open('C2.csv', mode='w', newline='') as Cm2file:
-    writer = csv.writer(Cm2file, delimiter=';')
-    writer.writerow(list(Cm2))
-
-with open('C3.csv', mode='w', newline='') as Cm3file:
-    writer = csv.writer(Cm3file, delimiter=';')
-    writer.writerow(list(Cm3))
-
-with open('C4.csv', mode='w', newline='') as Cm4file:
-    writer = csv.writer(Cm4file, delimiter=';')
-    writer.writerow(list(Cm4))
-            </code></pre>
+# CSV export
+for fname, data in [('Cm.csv', Cm[tmax,:]), ('Cim.csv', Cim[tmax,:]),
+                    ('C2.csv', Cm2), ('C3.csv', Cm3), ('C4.csv', Cm4)]:
+    with open(fname, 'w', newline='') as f:
+        csv.writer(f, delimiter=';').writerow(list(data))</code></pre>
         </div>
-        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-            <pre><code class="python">import numpy as np
-import matplotlib.pyplot as plt
-from scipy.special import gamma, factorial
-import csv
+    </div>
 
-C0 = 0.1
-vm = 1e-4
-Dm = 5e-5
-n = 20
-tau = 1
-h = 0.1
-tmax = 2700
-w = 1e-5
-tetim = 0.1
-tetm = 0.4
-gam = 0.6
-tet = tetim / tetm
-alpha = 0.9
-bet = 0.9
-
-f = 0.7
-pb = 1000
-kd = 1e-4
-mlim = 1e-6
-msim = 1e-8
-mlm = 1e-3
-msm = 1e-4
-
-Rm = (tetm + f * pb * kd)
-Rim = (tetim + (1 - f) * pb * kd)
-A1 = (tetm * mlm + f * pb * kd * msm)
-A2 = (tetim * mlim + (1 - f) * pb * kd * msim)
-F1 = 1 / ((gamma(3 - (bet + 1)) * (h**(bet + 1))) * Rm)
-
-Cm = np.zeros((tmax + 1, n + 1))
-Cim = np.zeros((tmax + 1, n + 1))
-Cm2 = np.zeros(tmax + 1)
-Cm3 = np.zeros(tmax + 1)
-Cm4 = np.zeros(tmax + 1)
-Cim2 = np.zeros(tmax + 1)
-Cim3 = np.zeros(tmax + 1)
-Cim4 = np.zeros(tmax + 1)
-
-for k in range(tmax + 1):
-    Cm[k, 0] = C0
-
-for k in range(tmax):
-    for i in range(n + 1):
-        s1 = 0
-        for l1 in range(k):
-            if k > 0:
-                s1 += (Cim[l1 + 1, i] - Cim[l1, i]) * ((k - l1 + 1)**(1 - alpha) - (k - l1)**(1 - alpha))
-        Cim[k + 1, i] = Cim[k, i] - s1 + ((gamma(2 - alpha) * tau**alpha) / Rim) * ((w * (Cm[k, i] - Cim[k, i])) - A2 * Cim[k, i])
-    for i in range(1, n):
-        if (bet + 1) == 2:
-            s01 = Cm[k, i + 1] - 2 * Cm[k, i] + Cm[k, i - 1]
-        else:
-            s01 = 0
-            for l in range(i):
-                s01 += ((l + 1)**(2 - (bet + 1)) - (l)**(2 - (bet + 1))) * (Cm[k, i + 1 - l] - 2 * Cm[k, i - l] + Cm[k, i - 1 - l])
-        Cm[k + 1, i] = (tau * tetm * Dm * F1 * s01) - (tau * vm * tetm * (Cm[k, i + 1] - Cm[k, i - 1])) / (Rm * 2 * h) - ((tau * w) / Rm) * (Cm[k, i] - Cim[k, i]) - ((tau * A1) / Rm) * Cm[k, i] + Cm[k, i]
-    Cm[k + 1, n] = Cm[k + 1, n - 1]
-
-x = [i * h for i in range(n + 1)]
-plt.figure(figsize=(10, 5))
-plt.plot(x, Cm[tmax, : ], label=f'Cm(t={tmax} s)', linewidth=2)
-plt.plot(x, Cm[2*tmax//3, : ], label=f'Cm(t={2*tmax//3} s)', linewidth=2)
-plt.plot(x, Cm[tmax//3, : ], label=f'Cm(t={tmax//3} s)', linewidth=2)
-plt.xlabel('X koordinata (m)', fontsize=12)
-plt.ylabel('Kontsentratsiya (m^3/m^3)', fontsize=12)
-plt.title('Cm ning X koordinata bo\'yicha taqsimoti', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-x = [i * h for i in range(n + 1)]
-plt.figure(figsize=(10, 5))
-plt.plot(x, Cim[tmax, :], label=f'Cim(t={tmax} s)', linewidth=2)
-plt.plot(x, Cim[2*tmax//3, : ], label=f'Cim(t={2*tmax//3} s)', linewidth=2)
-plt.plot(x, Cim[tmax//3, : ], label=f'Cim(t={tmax//3} s)', linewidth=2)
-plt.xlabel('X koordinata (m)', fontsize=12)
-plt.ylabel('Kontsentratsiya (m^3/m^3)', fontsize=12)
-plt.title('Cim ning X koordinata bo\'yicha taqsimoti', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-y = [k * tau for k in range(tmax + 1)]
-for k in range(tmax + 1):
-    Cm2[k] = Cm[k, 2]
-    Cm3[k] = Cm[k, 3]
-    Cm4[k] = Cm[k, 4]
-    Cim2[k] = Cim[k, 2]
-    Cim3[k] = Cim[k, 3]
-    Cim4[k] = Cim[k, 4]
-
-plt.figure(figsize=(10, 5))
-plt.plot(y, Cm2, label='Cm (x=0.1 m)', linewidth=2)
-plt.plot(y, Cm3, label='Cm (x=0.3 m)', linewidth=2)
-plt.plot(y, Cm4, label='Cm (x=0.5 m)', linewidth=2)
-plt.xlabel('Vaqt (s)', fontsize=12)
-plt.ylabel('Cm kontsentratsiyasi (m^3/m^3)', fontsize=12)
-plt.title('Cm ning vaqt bo\'yicha dinamikasi', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-plt.figure(figsize=(10, 5))
-plt.plot(y, Cim2, label='Cim (x=0.1 m)', linewidth=2)
-plt.plot(y, Cim3, label='Cim (x=0.3 m)', linewidth=2)
-plt.plot(y, Cim4, label='Cim (x=0.5 m)', linewidth=2)
-plt.xlabel('Vaqt (s)', fontsize=12)
-plt.ylabel('Cim kontsentratsiyasi (m^3/m^3)', fontsize=12)
-plt.title('Cim ning vaqt bo\'yicha dinamikasi', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-with open('Cm.csv', mode='w', newline='') as Cmfile:
-    writer = csv.writer(Cmfile, delimiter=';')
-    writer.writerow(list(Cm[tmax, :]))
-
-with open('Cim.csv', mode='w', newline='') as Cimfile:
-    writer = csv.writer(Cimfile, delimiter=';')
-    writer.writerow(list(Cim[tmax, :]))
-
-with open('C2.csv', mode='w', newline='') as Cm2file:
-    writer = csv.writer(Cm2file, delimiter=';')
-    writer.writerow(list(Cm2))
-
-with open('C3.csv', mode='w', newline='') as Cm3file:
-    writer = csv.writer(Cm3file, delimiter=';')
-    writer.writerow(list(Cm3))
-
-with open('C4.csv', mode='w', newline='') as Cm4file:
-    writer = csv.writer(Cm4file, delimiter=';')
-    writer.writerow(list(Cm4))
-                
-            </code></pre>
-        </div>
-        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-            <pre><code class="python">import numpy as np
+    <!-- Tab 2 -->
+    <div id="tab2" class="tab-pane hidden">
+        <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-xl border border-gray-700">
+            <div class="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <span class="text-xs text-gray-400 font-mono">model2_adsorption.py</span>
+                <button onclick="copyCode('code2')" class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded transition-colors">Копировать</button>
+            </div>
+            <pre class="overflow-x-auto"><code id="code2" class="language-python text-sm">import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import gamma
 import csv
 
-C0 = 0.1
-Dm = 1e-4
-n = 20
-tau = 0.5
-h = 0.01
-tmax = 2700
+C0 = 0.1;  vm = 1e-4;  Dm = 5e-5;  n = 20
+tau = 1;   h = 0.1;    tmax = 2700; w = 1e-5
+tetim = 0.1;  tetm = 0.4;  gam = 0.6
+alpha = 0.9;  bet = 0.9
+f = 0.7;  pb = 1000;  kd = 1e-4
+mlim = 1e-6;  msim = 1e-8;  mlm = 1e-3;  msm = 1e-4
 
-gam = 2
-alpha = 1
-betta1 = 0.7
-betta2 = 0.5
-r1 = 1.5
-r2 = 1.0
+Rm  = tetm  + f*pb*kd
+Rim = tetim + (1-f)*pb*kd
+A1  = tetm*mlm  + f*pb*kd*msm
+A2  = tetim*mlim + (1-f)*pb*kd*msim
+F1  = 1 / (gamma(3-(bet+1)) * h**(bet+1) * Rm)
 
-T1 = 1 / (gamma(3 - gam) * h**gam)
-T2 = 1 / gamma(2 - alpha) * tau**alpha
-T3 = r1 / gamma(2 - betta1) * tau**betta1
-T4 = r2 / gamma(2 - betta2) * tau**betta2
+Cm  = np.zeros((tmax+1, n+1));  Cim = np.zeros((tmax+1, n+1))
+Cm2 = np.zeros(tmax+1);         Cm3 = np.zeros(tmax+1);  Cm4 = np.zeros(tmax+1)
+Cim2 = np.zeros(tmax+1);        Cim3 = np.zeros(tmax+1); Cim4 = np.zeros(tmax+1)
 
-C = np.zeros((tmax + 1, n + 1))
-C2 = np.zeros(tmax + 1)
-C3 = np.zeros(tmax + 1)
-C4 = np.zeros(tmax + 1)
+for k in range(tmax+1):
+    Cm[k,0] = C0
 
+for k in range(tmax):
+    for i in range(n+1):
+        s1 = sum((Cim[l+1,i]-Cim[l,i])*((k-l+1)**(1-alpha)-(k-l)**(1-alpha)) for l in range(k))
+        Cim[k+1,i] = Cim[k,i]-s1 + (gamma(2-alpha)*tau**alpha/Rim)*(w*(Cm[k,i]-Cim[k,i])-A2*Cim[k,i])
+    for i in range(1, n):
+        if (bet+1) == 2:
+            s01 = Cm[k,i+1] - 2*Cm[k,i] + Cm[k,i-1]
+        else:
+            s01 = sum(((l+1)**(2-(bet+1))-l**(2-(bet+1))) *
+                      (Cm[k,i+1-l]-2*Cm[k,i-l]+Cm[k,i-1-l]) for l in range(i))
+        Cm[k+1,i] = (
+            tau*tetm*Dm*F1*s01
+            - tau*vm*tetm*(Cm[k,i+1]-Cm[k,i-1])/(Rm*2*h)
+            - (tau*w/Rm)*(Cm[k,i]-Cim[k,i])
+            - (tau*A1/Rm)*Cm[k,i] + Cm[k,i]
+        )
+    Cm[k+1,n] = Cm[k+1,n-1]
 
-for k in range(tmax + 1):
-    C[k, 0] = C0
+# Plots and CSV (same pattern as Model 1)
+x = [i*h for i in range(n+1)]
+y = [k*tau for k in range(tmax+1)]
+for k in range(tmax+1):
+    Cm2[k]=Cm[k,2]; Cm3[k]=Cm[k,3]; Cm4[k]=Cm[k,4]
+    Cim2[k]=Cim[k,2]; Cim3[k]=Cim[k,3]; Cim4[k]=Cim[k,4]
+
+fig, axes = plt.subplots(1,2,figsize=(14,5))
+for ax, data, name in [(axes[0],Cm,'Cm'),(axes[1],Cim,'Cim')]:
+    ax.plot(x,data[tmax,:],label=f'{name}(t={tmax})'); ax.legend(); ax.grid(True)
+plt.tight_layout(); plt.show()</code></pre>
+        </div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div id="tab3" class="tab-pane hidden">
+        <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-xl border border-gray-700">
+            <div class="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <span class="text-xs text-gray-400 font-mono">model3_multiterm.py</span>
+                <button onclick="copyCode('code3')" class="text-xs text-gray-400 hover:text-white px-2 py-1 rounded transition-colors">Копировать</button>
+            </div>
+            <pre class="overflow-x-auto"><code id="code3" class="language-python text-sm">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.special import gamma
+import csv
+
+C0 = 0.1;  Dm = 1e-4;  n = 20
+tau = 0.5; h = 0.01;   tmax = 900
+gam = 2;   alpha = 1;  betta1 = 0.7;  betta2 = 0.5
+r1 = 1.5;  r2 = 1.0
+
+T1 = 1 / (gamma(3-gam) * h**gam)
+T2 = 1/gamma(2-alpha) * tau**alpha
+T3 = r1/gamma(2-betta1) * tau**betta1
+T4 = r2/gamma(2-betta2) * tau**betta2
+
+C  = np.zeros((tmax+1, n+1))
+C2 = np.zeros(tmax+1);  C3 = np.zeros(tmax+1);  C4 = np.zeros(tmax+1)
+
+for k in range(tmax+1):
+    C[k,0] = C0
 
 for k in range(tmax):
     for i in range(1, n):
-        s1 = 0
-        s2 = 0
-        s3 = 0
+        s1 = s2 = s3 = 0
         for l1 in range(k):
-            if k > 0:
-                s1 += (C[l1 + 1, i] - C[l1, i]) * ((k - l1 + 1)**(1 - alpha) - (k - l1)**(1 - alpha))
-                s2 += (C[l1 + 1, i] - C[l1, i]) * ((k - l1 + 1)**(1 - betta1) - (k - l1)**(1 - betta1))
-                s3 += (C[l1 + 1, i] - C[l1, i]) * ((k - l1 + 1)**(1 - betta2) - (k - l1)**(1 - betta2))
+            diff = C[l1+1,i] - C[l1,i]
+            s1 += diff * ((k-l1+1)**(1-alpha)  - (k-l1)**(1-alpha))
+            s2 += diff * ((k-l1+1)**(1-betta1) - (k-l1)**(1-betta1))
+            s3 += diff * ((k-l1+1)**(1-betta2) - (k-l1)**(1-betta2))
         if gam == 2:
-            s01 = C[k, i + 1] - 2 * C[k, i] + C[k, i - 1]
+            s01 = C[k,i+1] - 2*C[k,i] + C[k,i-1]
         else:
-            s01 = 0
-            for l in range(i):
-                s01 += (C[k, i - 1 - l] - 2 * C[k, i - l] + C[k, i + 1 - l]) * ((l + 1)**(2 - gam) - l**(2 - gam))
-        C[k + 1, i] = (Dm * T1 * s01 - T2 * (s1 - C[k, i]) - T3 * (s2 - C[k, i]) - T4 * (s3 - C[k, i])) / (T2 + T3 + T4)
-    C[k + 1, n] = C[k + 1, n - 1]
+            s01 = sum((C[k,i-1-l]-2*C[k,i-l]+C[k,i+1-l])*((l+1)**(2-gam)-l**(2-gam))
+                      for l in range(i))
+        C[k+1,i] = (Dm*T1*s01 - T2*(s1-C[k,i]) - T3*(s2-C[k,i]) - T4*(s3-C[k,i])) / (T2+T3+T4)
+    C[k+1,n] = C[k+1,n-1]
 
-x = [i * h for i in range(n + 1)]
-plt.figure(figsize=(10, 5))
-plt.plot(x, C[tmax, : ], label=f'C(t={tmax} s)', linewidth=2)
-plt.plot(x, C[2*tmax//3, : ], label=f'C(t={2*tmax//3} s)', linewidth=2)
-plt.plot(x, C[tmax//3, : ], label=f'C(t={tmax//3} s)', linewidth=2)
-plt.xlabel('X koordinata (m)', fontsize=12)
-plt.ylabel('Kontsentratsiya (m^3/m^3)', fontsize=12)
-plt.title('C ning X koordinata bo\'yicha taqsimoti', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
+x = [i*h for i in range(n+1)]
+y = [k*tau for k in range(tmax+1)]
+for k in range(tmax+1):
+    C2[k]=C[k,2]; C3[k]=C[k,3]; C4[k]=C[k,4]
 
-y = [k * tau for k in range(tmax + 1)]
-for k in range(tmax + 1):
-    C2[k] = C[k, 2]
-    C3[k] = C[k, 3]
-    C4[k] = C[k, 4]
-
-plt.figure(figsize=(10, 5))
-plt.plot(y, C2, label='C (x=0.1 m)', linewidth=2)
-plt.plot(y, C3, label='C (x=0.3 m)', linewidth=2)
-plt.plot(y, C4, label='C (x=0.5 m)', linewidth=2)
-plt.xlabel('Vaqt (s)', fontsize=12)
-plt.ylabel('C kontsentratsiyasi (m^3/m^3)', fontsize=12)
-plt.title('C ning vaqt bo\'yicha dinamikasi', fontsize=14)
-plt.legend()
-plt.grid(True)
-plt.show()
-
-with open('C1.csv', mode='w', newline='') as Cfile:
-    writer = csv.writer(Cfile, delimiter=';')
-    writer.writerow(list(C[tmax, :]))
-
-
-with open('C2.csv', mode='w', newline='') as Cfile:
-    writer = csv.writer(Cfile, delimiter=';')
-    writer.writerow(list(C))
-
-with open('C3.csv', mode='w', newline='') as Cfile:
-    writer = csv.writer(Cfile, delimiter=';')
-    writer.writerow(list(C))
-
-with open('C4.csv', mode='w', newline='') as Cfile:
-    writer = csv.writer(Cfile, delimiter=';')
-    writer.writerow(list(C))
-            </code></pre>
+fig, axes = plt.subplots(1,2,figsize=(14,5))
+axes[0].plot(x,C[tmax,:],label=f'C(t={tmax})'); axes[0].legend(); axes[0].grid(True)
+axes[1].plot(y,C2,label='x=0.1'); axes[1].plot(y,C3,label='x=0.3')
+axes[1].plot(y,C4,label='x=0.5'); axes[1].legend(); axes[1].grid(True)
+plt.tight_layout(); plt.show()</code></pre>
         </div>
     </div>
 </div>
 
+<script>
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('bg-blue-600','text-white','shadow-md');
+            b.classList.add('bg-gray-200','dark:bg-gray-700','text-gray-700','dark:text-gray-300');
+        });
+        document.getElementById(tabId).classList.remove('hidden');
+        const btn = document.getElementById('btn-' + tabId);
+        btn.classList.add('bg-blue-600','text-white','shadow-md');
+        btn.classList.remove('bg-gray-200','dark:bg-gray-700','text-gray-700','dark:text-gray-300');
+
+        // Re-highlight
+        document.querySelectorAll('#' + tabId + ' code').forEach(el => {
+            if (window.hljs) hljs.highlightElement(el);
+        });
+    }
+
+    function copyCode(id) {
+        const code = document.getElementById(id).textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            const btn = event.target;
+            btn.textContent = 'Скопировано!';
+            setTimeout(() => btn.textContent = 'Копировать', 2000);
+        });
+    }
+</script>
 {% endblock %}

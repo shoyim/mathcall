@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /d D:\\\\django\\\\mathcall)",
+      "Bash(python manage.py check --deploy)",
+      "Bash(python manage.py check)"
+    ]
+  }
+}

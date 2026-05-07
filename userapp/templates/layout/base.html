@@ -1,1292 +1,471 @@
-<!-- home/templates/home/base.html -->
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ru" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %} ПРОГРАММНО {% endblock %}</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>{% block title %}ПРОГРАММНО{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                            600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0', transform: 'translateY(-10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                    }
+                }
+            }
+        }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- MathJax 3 – inline math rendering for parameter names -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(','\\)']],
+                displayMath: [['$$','$$']],
+            },
+            options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+            startup: { typeset: false }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
     {% block extra_head %}{% endblock %}
 
     <style>
-        .hide-important {
-            display: none !important;
+        /* Cube animation */
+        .cube { position: absolute; width: 86px; height: 100px; }
+        .right { background: #E79C10; transform: rotate(-30deg) skewX(-30deg) translate(49px,65px) scaleY(.86); }
+        .left  { background: #D53A33; transform: rotate(90deg) skewX(-30deg) scaleY(.86) translate(25px,-50px); }
+        .top   { background: #1d9099; transform: rotate(210deg) skew(-30deg) translate(-75px,-22px) scaleY(.86); z-index: 2; }
+        .face  { height: 50px; width: 50px; position: absolute; transform-origin: 0 0; }
+
+        .h1.w1.l1{z-index:-1;animation:h1w1l1 3s ease infinite}
+        @keyframes h1w1l1{0%{transform:translate(0%,-100%)}14%{transform:translate(-50%,-125%)}28%{transform:translate(0%,-150%)}43%{transform:translate(0%,-200%)}57%{transform:translate(50%,-175%)}71%{transform:translate(0%,-150%)}85%{transform:translate(0%,-100%)}100%{transform:translate(0%,-100%)}}
+        .h1.w1.l2{z-index:-1;animation:h1w1l2 3s ease infinite}
+        @keyframes h1w1l2{0%{transform:translate(50%,-75%)}14%{transform:translate(50%,-75%)}28%{transform:translate(100%,-100%)}43%{transform:translate(100%,-150%)}57%{transform:translate(100%,-150%)}71%{transform:translate(50%,-125%)}85%{transform:translate(50%,-75%)}100%{transform:translate(50%,-75%)}}
+        .h1.w1.l3{z-index:-1;animation:h1w1l3 3s ease infinite}
+        @keyframes h1w1l3{0%{transform:translate(100%,-50%)}14%{transform:translate(150%,-25%)}28%{transform:translate(200%,-50%)}43%{transform:translate(200%,-100%)}57%{transform:translate(150%,-125%)}71%{transform:translate(100%,-100%)}85%{transform:translate(100%,-50%)}100%{transform:translate(100%,-50%)}}
+        .h1.w2.l1{z-index:-1;animation:h1w2l1 3s ease infinite}
+        @keyframes h1w2l1{0%{transform:translate(-50%,-75%)}14%{transform:translate(-100%,-100%)}28%{transform:translate(-100%,-100%)}43%{transform:translate(-100%,-150%)}57%{transform:translate(-50%,-125%)}71%{transform:translate(-50%,-125%)}85%{transform:translate(-50%,-75%)}100%{transform:translate(-50%,-75%)}}
+        .h1.w2.l2{z-index:-1;animation:h1w2l2 3s ease infinite}
+        @keyframes h1w2l2{0%{transform:translate(0%,-50%)}14%{transform:translate(0%,-50%)}28%{transform:translate(0%,-50%)}43%{transform:translate(0%,-100%)}57%{transform:translate(0%,-100%)}71%{transform:translate(0%,-100%)}85%{transform:translate(0%,-50%)}100%{transform:translate(0%,-50%)}}
+        .h1.w2.l3{z-index:-1;animation:h1w2l3 3s ease infinite}
+        @keyframes h1w2l3{0%{transform:translate(50%,-25%)}14%{transform:translate(100%,0%)}28%{transform:translate(100%,0%)}43%{transform:translate(100%,-50%)}57%{transform:translate(50%,-75%)}71%{transform:translate(50%,-75%)}85%{transform:translate(50%,-25%)}100%{transform:translate(50%,-25%)}}
+        .h1.w3.l1{z-index:-1;animation:h1w3l1 3s ease infinite}
+        @keyframes h1w3l1{0%{transform:translate(-100%,-50%)}14%{transform:translate(-150%,-75%)}28%{transform:translate(-200%,-50%)}43%{transform:translate(-200%,-100%)}57%{transform:translate(-150%,-75%)}71%{transform:translate(-100%,-100%)}85%{transform:translate(-100%,-50%)}100%{transform:translate(-100%,-50%)}}
+        .h1.w3.l2{z-index:-1;animation:h1w3l2 3s ease infinite}
+        @keyframes h1w3l2{0%{transform:translate(-50%,-25%)}14%{transform:translate(-50%,-25%)}28%{transform:translate(-100%,0%)}43%{transform:translate(-100%,-50%)}57%{transform:translate(-100%,-50%)}71%{transform:translate(-50%,-75%)}85%{transform:translate(-50%,-25%)}100%{transform:translate(-50%,-25%)}}
+        .h1.w3.l3{z-index:-1;animation:h1w3l3 3s ease infinite}
+        @keyframes h1w3l3{0%{transform:translate(0%,0%)}14%{transform:translate(50%,25%)}28%{transform:translate(0%,50%)}43%{transform:translate(0%,0%)}57%{transform:translate(-50%,-25%)}71%{transform:translate(0%,-50%)}85%{transform:translate(0%,0%)}100%{transform:translate(0%,0%)}}
+        .h2.w1.l1{z-index:-2;animation:h2w1l1 3s ease infinite}
+        @keyframes h2w1l1{0%{transform:translate(0%,-50%)}14%{transform:translate(-50%,-75%)}28%{transform:translate(0%,-100%)}43%{transform:translate(0%,-100%)}57%{transform:translate(50%,-75%)}71%{transform:translate(0%,-50%)}85%{transform:translate(0%,-50%)}100%{transform:translate(0%,-50%)}}
+        .h2.w1.l2{z-index:-2;animation:h2w1l2 3s ease infinite}
+        @keyframes h2w1l2{0%{transform:translate(50%,-25%)}14%{transform:translate(50%,-25%)}28%{transform:translate(100%,-50%)}43%{transform:translate(100%,-50%)}57%{transform:translate(100%,-50%)}71%{transform:translate(50%,-25%)}85%{transform:translate(50%,-25%)}100%{transform:translate(50%,-25%)}}
+        .h2.w1.l3{z-index:-2;animation:h2w1l3 3s ease infinite}
+        @keyframes h2w1l3{0%{transform:translate(100%,0%)}14%{transform:translate(150%,25%)}28%{transform:translate(200%,0%)}43%{transform:translate(200%,0%)}57%{transform:translate(150%,-25%)}71%{transform:translate(100%,0%)}85%{transform:translate(100%,0%)}100%{transform:translate(100%,0%)}}
+        .h2.w2.l1{z-index:-2;animation:h2w2l1 3s ease infinite}
+        @keyframes h2w2l1{0%{transform:translate(-50%,-25%)}14%{transform:translate(-100%,-50%)}28%{transform:translate(-100%,-50%)}43%{transform:translate(-100%,-50%)}57%{transform:translate(-50%,-25%)}71%{transform:translate(-50%,-25%)}85%{transform:translate(-50%,-25%)}100%{transform:translate(-50%,-25%)}}
+        .h2.w2.l2{z-index:-2;animation:h2w2l2 3s ease infinite}
+        @keyframes h2w2l2{0%{transform:translate(0%,0%)}14%{transform:translate(0%,0%)}28%{transform:translate(0%,0%)}43%{transform:translate(0%,0%)}57%{transform:translate(0%,0%)}71%{transform:translate(0%,0%)}85%{transform:translate(0%,0%)}100%{transform:translate(0%,0%)}}
+        .h2.w2.l3{z-index:-2;animation:h2w2l3 3s ease infinite}
+        @keyframes h2w2l3{0%{transform:translate(50%,25%)}14%{transform:translate(100%,50%)}28%{transform:translate(100%,50%)}43%{transform:translate(100%,50%)}57%{transform:translate(50%,25%)}71%{transform:translate(50%,25%)}85%{transform:translate(50%,25%)}100%{transform:translate(50%,25%)}}
+        .h2.w3.l1{z-index:-2;animation:h2w3l1 3s ease infinite}
+        @keyframes h2w3l1{0%{transform:translate(-100%,0%)}14%{transform:translate(-150%,-25%)}28%{transform:translate(-200%,0%)}43%{transform:translate(-200%,0%)}57%{transform:translate(-150%,25%)}71%{transform:translate(-100%,0%)}85%{transform:translate(-100%,0%)}100%{transform:translate(-100%,0%)}}
+        .h2.w3.l2{z-index:-2;animation:h2w3l2 3s ease infinite}
+        @keyframes h2w3l2{0%{transform:translate(-50%,25%)}14%{transform:translate(-50%,25%)}28%{transform:translate(-100%,50%)}43%{transform:translate(-100%,50%)}57%{transform:translate(-100%,50%)}71%{transform:translate(-50%,25%)}85%{transform:translate(-50%,25%)}100%{transform:translate(-50%,25%)}}
+        .h2.w3.l3{z-index:-2;animation:h2w3l3 3s ease infinite}
+        @keyframes h2w3l3{0%{transform:translate(0%,50%)}14%{transform:translate(50%,75%)}28%{transform:translate(0%,100%)}43%{transform:translate(0%,100%)}57%{transform:translate(-50%,75%)}71%{transform:translate(0%,50%)}85%{transform:translate(0%,50%)}100%{transform:translate(0%,50%)}}
+        .h3.w1.l1{z-index:-3;animation:h3w1l1 3s ease infinite}
+        @keyframes h3w1l1{0%{transform:translate(0%,0%)}14%{transform:translate(-50%,-25%)}28%{transform:translate(0%,-50%)}43%{transform:translate(0%,0%)}57%{transform:translate(50%,25%)}71%{transform:translate(0%,50%)}85%{transform:translate(0%,0%)}100%{transform:translate(0%,0%)}}
+        .h3.w1.l2{z-index:-3;animation:h3w1l2 3s ease infinite}
+        @keyframes h3w1l2{0%{transform:translate(50%,25%)}14%{transform:translate(50%,25%)}28%{transform:translate(100%,0%)}43%{transform:translate(100%,50%)}57%{transform:translate(100%,50%)}71%{transform:translate(50%,75%)}85%{transform:translate(50%,25%)}100%{transform:translate(50%,25%)}}
+        .h3.w1.l3{z-index:-3;animation:h3w1l3 3s ease infinite}
+        @keyframes h3w1l3{0%{transform:translate(100%,50%)}14%{transform:translate(150%,75%)}28%{transform:translate(200%,50%)}43%{transform:translate(200%,100%)}57%{transform:translate(150%,75%)}71%{transform:translate(100%,100%)}85%{transform:translate(100%,50%)}100%{transform:translate(100%,50%)}}
+        .h3.w2.l1{z-index:-3;animation:h3w2l1 3s ease infinite}
+        @keyframes h3w2l1{0%{transform:translate(-50%,25%)}14%{transform:translate(-100%,0%)}28%{transform:translate(-100%,0%)}43%{transform:translate(-100%,50%)}57%{transform:translate(-50%,75%)}71%{transform:translate(-50%,75%)}85%{transform:translate(-50%,25%)}100%{transform:translate(-50%,25%)}}
+        .h3.w2.l2{z-index:-3;animation:h3w2l2 3s ease infinite}
+        @keyframes h3w2l2{0%{transform:translate(0%,50%)}14%{transform:translate(0%,50%)}28%{transform:translate(0%,50%)}43%{transform:translate(0%,100%)}57%{transform:translate(0%,100%)}71%{transform:translate(0%,100%)}85%{transform:translate(0%,50%)}100%{transform:translate(0%,50%)}}
+        .h3.w2.l3{z-index:-3;animation:h3w2l3 3s ease infinite}
+        @keyframes h3w2l3{0%{transform:translate(50%,75%)}14%{transform:translate(100%,100%)}28%{transform:translate(100%,100%)}43%{transform:translate(100%,150%)}57%{transform:translate(50%,125%)}71%{transform:translate(50%,125%)}85%{transform:translate(50%,75%)}100%{transform:translate(50%,75%)}}
+        .h3.w3.l1{z-index:-3;animation:h3w3l1 3s ease infinite}
+        @keyframes h3w3l1{0%{transform:translate(-100%,50%)}14%{transform:translate(-150%,25%)}28%{transform:translate(-200%,50%)}43%{transform:translate(-200%,100%)}57%{transform:translate(-150%,125%)}71%{transform:translate(-100%,100%)}85%{transform:translate(-100%,50%)}100%{transform:translate(-100%,50%)}}
+        .h3.w3.l2{z-index:-3;animation:h3w3l2 3s ease infinite}
+        @keyframes h3w3l2{0%{transform:translate(-50%,75%)}14%{transform:translate(-50%,75%)}28%{transform:translate(-100%,100%)}43%{transform:translate(-100%,150%)}57%{transform:translate(-100%,150%)}71%{transform:translate(-50%,125%)}85%{transform:translate(-50%,75%)}100%{transform:translate(-50%,75%)}}
+        .h3.w3.l3{z-index:-3;animation:h3w3l3 3s ease infinite}
+        @keyframes h3w3l3{0%{transform:translate(0%,100%)}14%{transform:translate(50%,125%)}28%{transform:translate(0%,150%)}43%{transform:translate(0%,200%)}57%{transform:translate(-50%,175%)}71%{transform:translate(0%,150%)}85%{transform:translate(0%,100%)}100%{transform:translate(0%,100%)}}
+
+        /* Smooth transitions */
+        * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+        /* Page loader overlay */
+        #page-loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(15,23,42,0.95);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 4px solid rgba(96,165,250,0.2);
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile menu animation */
+        #mobile-menu { transition: all 0.3s ease; }
+
+        /* Active nav link */
+        .nav-link-active { border-bottom: 2px solid #60a5fa; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 3px; }
+
+        /* Form input styles for dark mode */
+        input[type="number"], input[type="text"], select, textarea {
+            background-color: inherit;
+            color: inherit;
         }
 
-        .show-important {
-            display: block !important;
+        /* Image shadow */
+        .img-doc { box-shadow: 0 4px 20px rgba(0,0,0,0.3); border-radius: 8px; }
+
+        /* Responsive cube animation */
+        #cube-scale-outer { transform-origin: center center; }
+        @media (max-width: 479px) {
+            #cube-scale-outer { transform: scale(0.5); margin: -50px 0; }
+        }
+        @media (min-width: 480px) and (max-width: 639px) {
+            #cube-scale-outer { transform: scale(0.65); margin: -35px 0; }
         }
 
-        .cube {
-            position: absolute;
-            width: 86px;
-            height: 100px;
-        }
-
-        .right {
-            background: #E79C10;
-            transform: rotate(-30deg) skewX(-30deg) translate(49px, 65px) scaleY(0.86);
-        }
-
-        .left {
-            background: #D53A33;
-            transform: rotate(90deg) skewX(-30deg) scaleY(0.86) translate(25px, -50px);
-        }
-
-        .top {
-            background: #1d9099;
-            transform: rotate(210deg) skew(-30deg) translate(-75px, -22px) scaleY(0.86);
-            z-index: 2;
-        }
-
-        .face {
-            height: 50px;
-            width: 50px;
-            position: absolute;
-            transform-origin: 0 0;
-        }
-
-        .h1.w1.l1 {
-            z-index: -1;
-            animation-name: h1w1l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w1l1 {
-            0% {
-                transform: translate(0%, -100%);
-            }
-
-            14% {
-                transform: translate(-50%, -125%);
-            }
-
-            28% {
-                transform: translate(0%, -150%);
-            }
-
-            43% {
-                transform: translate(0%, -200%);
-            }
-
-            57% {
-                transform: translate(50%, -175%);
-            }
-
-            71% {
-                transform: translate(0%, -150%);
-            }
-
-            85% {
-                transform: translate(0%, -100%);
-            }
-
-            100% {
-                transform: translate(0%, -100%);
-            }
-        }
-
-        .h1.w1.l2 {
-            z-index: -1;
-            animation-name: h1w1l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w1l2 {
-            0% {
-                transform: translate(50%, -75%);
-            }
-
-            14% {
-                transform: translate(50%, -75%);
-            }
-
-            28% {
-                transform: translate(100%, -100%);
-            }
-
-            43% {
-                transform: translate(100%, -150%);
-            }
-
-            57% {
-                transform: translate(100%, -150%);
-            }
-
-            71% {
-                transform: translate(50%, -125%);
-            }
-
-            85% {
-                transform: translate(50%, -75%);
-            }
-
-            100% {
-                transform: translate(50%, -75%);
-            }
-        }
-
-        .h1.w1.l3 {
-            z-index: -1;
-            animation-name: h1w1l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w1l3 {
-            0% {
-                transform: translate(100%, -50%);
-            }
-
-            14% {
-                transform: translate(150%, -25%);
-            }
-
-            28% {
-                transform: translate(200%, -50%);
-            }
-
-            43% {
-                transform: translate(200%, -100%);
-            }
-
-            57% {
-                transform: translate(150%, -125%);
-            }
-
-            71% {
-                transform: translate(100%, -100%);
-            }
-
-            85% {
-                transform: translate(100%, -50%);
-            }
-
-            100% {
-                transform: translate(100%, -50%);
-            }
-        }
-
-        .h1.w2.l1 {
-            z-index: -1;
-            animation-name: h1w2l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w2l1 {
-            0% {
-                transform: translate(-50%, -75%);
-            }
-
-            14% {
-                transform: translate(-100%, -100%);
-            }
-
-            28% {
-                transform: translate(-100%, -100%);
-            }
-
-            43% {
-                transform: translate(-100%, -150%);
-            }
-
-            57% {
-                transform: translate(-50%, -125%);
-            }
-
-            71% {
-                transform: translate(-50%, -125%);
-            }
-
-            85% {
-                transform: translate(-50%, -75%);
-            }
-
-            100% {
-                transform: translate(-50%, -75%);
-            }
-        }
-
-        .h1.w2.l2 {
-            z-index: -1;
-            animation-name: h1w2l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w2l2 {
-            0% {
-                transform: translate(0%, -50%);
-            }
-
-            14% {
-                transform: translate(0%, -50%);
-            }
-
-            28% {
-                transform: translate(0%, -50%);
-            }
-
-            43% {
-                transform: translate(0%, -100%);
-            }
-
-            57% {
-                transform: translate(0%, -100%);
-            }
-
-            71% {
-                transform: translate(0%, -100%);
-            }
-
-            85% {
-                transform: translate(0%, -50%);
-            }
-
-            100% {
-                transform: translate(0%, -50%);
-            }
-        }
-
-        .h1.w2.l3 {
-            z-index: -1;
-            animation-name: h1w2l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w2l3 {
-            0% {
-                transform: translate(50%, -25%);
-            }
-
-            14% {
-                transform: translate(100%, 0%);
-            }
-
-            28% {
-                transform: translate(100%, 0%);
-            }
-
-            43% {
-                transform: translate(100%, -50%);
-            }
-
-            57% {
-                transform: translate(50%, -75%);
-            }
-
-            71% {
-                transform: translate(50%, -75%);
-            }
-
-            85% {
-                transform: translate(50%, -25%);
-            }
-
-            100% {
-                transform: translate(50%, -25%);
-            }
-        }
-
-        .h1.w3.l1 {
-            z-index: -1;
-            animation-name: h1w3l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w3l1 {
-            0% {
-                transform: translate(-100%, -50%);
-            }
-
-            14% {
-                transform: translate(-150%, -75%);
-            }
-
-            28% {
-                transform: translate(-200%, -50%);
-            }
-
-            43% {
-                transform: translate(-200%, -100%);
-            }
-
-            57% {
-                transform: translate(-150%, -75%);
-            }
-
-            71% {
-                transform: translate(-100%, -100%);
-            }
-
-            85% {
-                transform: translate(-100%, -50%);
-            }
-
-            100% {
-                transform: translate(-100%, -50%);
-            }
-        }
-
-        .h1.w3.l2 {
-            z-index: -1;
-            animation-name: h1w3l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w3l2 {
-            0% {
-                transform: translate(-50%, -25%);
-            }
-
-            14% {
-                transform: translate(-50%, -25%);
-            }
-
-            28% {
-                transform: translate(-100%, 0%);
-            }
-
-            43% {
-                transform: translate(-100%, -50%);
-            }
-
-            57% {
-                transform: translate(-100%, -50%);
-            }
-
-            71% {
-                transform: translate(-50%, -75%);
-            }
-
-            85% {
-                transform: translate(-50%, -25%);
-            }
-
-            100% {
-                transform: translate(-50%, -25%);
-            }
-        }
-
-        .h1.w3.l3 {
-            z-index: -1;
-            animation-name: h1w3l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h1w3l3 {
-            0% {
-                transform: translate(0%, 0%);
-            }
-
-            14% {
-                transform: translate(50%, 25%);
-            }
-
-            28% {
-                transform: translate(0%, 50%);
-            }
-
-            43% {
-                transform: translate(0%, 0%);
-            }
-
-            57% {
-                transform: translate(-50%, -25%);
-            }
-
-            71% {
-                transform: translate(0%, -50%);
-            }
-
-            85% {
-                transform: translate(0%, 0%);
-            }
-
-            100% {
-                transform: translate(0%, 0%);
-            }
-        }
-
-        .h2.w1.l1 {
-            z-index: -2;
-            animation-name: h2w1l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w1l1 {
-            0% {
-                transform: translate(0%, -50%);
-            }
-
-            14% {
-                transform: translate(-50%, -75%);
-            }
-
-            28% {
-                transform: translate(0%, -100%);
-            }
-
-            43% {
-                transform: translate(0%, -100%);
-            }
-
-            57% {
-                transform: translate(50%, -75%);
-            }
-
-            71% {
-                transform: translate(0%, -50%);
-            }
-
-            85% {
-                transform: translate(0%, -50%);
-            }
-
-            100% {
-                transform: translate(0%, -50%);
-            }
-        }
-
-        .h2.w1.l2 {
-            z-index: -2;
-            animation-name: h2w1l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w1l2 {
-            0% {
-                transform: translate(50%, -25%);
-            }
-
-            14% {
-                transform: translate(50%, -25%);
-            }
-
-            28% {
-                transform: translate(100%, -50%);
-            }
-
-            43% {
-                transform: translate(100%, -50%);
-            }
-
-            57% {
-                transform: translate(100%, -50%);
-            }
-
-            71% {
-                transform: translate(50%, -25%);
-            }
-
-            85% {
-                transform: translate(50%, -25%);
-            }
-
-            100% {
-                transform: translate(50%, -25%);
-            }
-        }
-
-        .h2.w1.l3 {
-            z-index: -2;
-            animation-name: h2w1l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w1l3 {
-            0% {
-                transform: translate(100%, 0%);
-            }
-
-            14% {
-                transform: translate(150%, 25%);
-            }
-
-            28% {
-                transform: translate(200%, 0%);
-            }
-
-            43% {
-                transform: translate(200%, 0%);
-            }
-
-            57% {
-                transform: translate(150%, -25%);
-            }
-
-            71% {
-                transform: translate(100%, 0%);
-            }
-
-            85% {
-                transform: translate(100%, 0%);
-            }
-
-            100% {
-                transform: translate(100%, 0%);
-            }
-        }
-
-        .h2.w2.l1 {
-            z-index: -2;
-            animation-name: h2w2l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w2l1 {
-            0% {
-                transform: translate(-50%, -25%);
-            }
-
-            14% {
-                transform: translate(-100%, -50%);
-            }
-
-            28% {
-                transform: translate(-100%, -50%);
-            }
-
-            43% {
-                transform: translate(-100%, -50%);
-            }
-
-            57% {
-                transform: translate(-50%, -25%);
-            }
-
-            71% {
-                transform: translate(-50%, -25%);
-            }
-
-            85% {
-                transform: translate(-50%, -25%);
-            }
-
-            100% {
-                transform: translate(-50%, -25%);
-            }
-        }
-
-        .h2.w2.l2 {
-            z-index: -2;
-            animation-name: h2w2l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w2l2 {
-            0% {
-                transform: translate(0%, 0%);
-            }
-
-            14% {
-                transform: translate(0%, 0%);
-            }
-
-            28% {
-                transform: translate(0%, 0%);
-            }
-
-            43% {
-                transform: translate(0%, 0%);
-            }
-
-            57% {
-                transform: translate(0%, 0%);
-            }
-
-            71% {
-                transform: translate(0%, 0%);
-            }
-
-            85% {
-                transform: translate(0%, 0%);
-            }
-
-            100% {
-                transform: translate(0%, 0%);
-            }
-        }
-
-        .h2.w2.l3 {
-            z-index: -2;
-            animation-name: h2w2l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w2l3 {
-            0% {
-                transform: translate(50%, 25%);
-            }
-
-            14% {
-                transform: translate(100%, 50%);
-            }
-
-            28% {
-                transform: translate(100%, 50%);
-            }
-
-            43% {
-                transform: translate(100%, 50%);
-            }
-
-            57% {
-                transform: translate(50%, 25%);
-            }
-
-            71% {
-                transform: translate(50%, 25%);
-            }
-
-            85% {
-                transform: translate(50%, 25%);
-            }
-
-            100% {
-                transform: translate(50%, 25%);
-            }
-        }
-
-        .h2.w3.l1 {
-            z-index: -2;
-            animation-name: h2w3l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w3l1 {
-            0% {
-                transform: translate(-100%, 0%);
-            }
-
-            14% {
-                transform: translate(-150%, -25%);
-            }
-
-            28% {
-                transform: translate(-200%, 0%);
-            }
-
-            43% {
-                transform: translate(-200%, 0%);
-            }
-
-            57% {
-                transform: translate(-150%, 25%);
-            }
-
-            71% {
-                transform: translate(-100%, 0%);
-            }
-
-            85% {
-                transform: translate(-100%, 0%);
-            }
-
-            100% {
-                transform: translate(-100%, 0%);
-            }
-        }
-
-        .h2.w3.l2 {
-            z-index: -2;
-            animation-name: h2w3l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w3l2 {
-            0% {
-                transform: translate(-50%, 25%);
-            }
-
-            14% {
-                transform: translate(-50%, 25%);
-            }
-
-            28% {
-                transform: translate(-100%, 50%);
-            }
-
-            43% {
-                transform: translate(-100%, 50%);
-            }
-
-            57% {
-                transform: translate(-100%, 50%);
-            }
-
-            71% {
-                transform: translate(-50%, 25%);
-            }
-
-            85% {
-                transform: translate(-50%, 25%);
-            }
-
-            100% {
-                transform: translate(-50%, 25%);
-            }
-        }
-
-        .h2.w3.l3 {
-            z-index: -2;
-            animation-name: h2w3l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h2w3l3 {
-            0% {
-                transform: translate(0%, 50%);
-            }
-
-            14% {
-                transform: translate(50%, 75%);
-            }
-
-            28% {
-                transform: translate(0%, 100%);
-            }
-
-            43% {
-                transform: translate(0%, 100%);
-            }
-
-            57% {
-                transform: translate(-50%, 75%);
-            }
-
-            71% {
-                transform: translate(0%, 50%);
-            }
-
-            85% {
-                transform: translate(0%, 50%);
-            }
-
-            100% {
-                transform: translate(0%, 50%);
-            }
-        }
-
-        .h3.w1.l1 {
-            z-index: -3;
-            animation-name: h3w1l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w1l1 {
-            0% {
-                transform: translate(0%, 0%);
-            }
-
-            14% {
-                transform: translate(-50%, -25%);
-            }
-
-            28% {
-                transform: translate(0%, -50%);
-            }
-
-            43% {
-                transform: translate(0%, 0%);
-            }
-
-            57% {
-                transform: translate(50%, 25%);
-            }
-
-            71% {
-                transform: translate(0%, 50%);
-            }
-
-            85% {
-                transform: translate(0%, 0%);
-            }
-
-            100% {
-                transform: translate(0%, 0%);
-            }
-        }
-
-        .h3.w1.l2 {
-            z-index: -3;
-            animation-name: h3w1l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w1l2 {
-            0% {
-                transform: translate(50%, 25%);
-            }
-
-            14% {
-                transform: translate(50%, 25%);
-            }
-
-            28% {
-                transform: translate(100%, 0%);
-            }
-
-            43% {
-                transform: translate(100%, 50%);
-            }
-
-            57% {
-                transform: translate(100%, 50%);
-            }
-
-            71% {
-                transform: translate(50%, 75%);
-            }
-
-            85% {
-                transform: translate(50%, 25%);
-            }
-
-            100% {
-                transform: translate(50%, 25%);
-            }
-        }
-
-        .h3.w1.l3 {
-            z-index: -3;
-            animation-name: h3w1l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w1l3 {
-            0% {
-                transform: translate(100%, 50%);
-            }
-
-            14% {
-                transform: translate(150%, 75%);
-            }
-
-            28% {
-                transform: translate(200%, 50%);
-            }
-
-            43% {
-                transform: translate(200%, 100%);
-            }
-
-            57% {
-                transform: translate(150%, 75%);
-            }
-
-            71% {
-                transform: translate(100%, 100%);
-            }
-
-            85% {
-                transform: translate(100%, 50%);
-            }
-
-            100% {
-                transform: translate(100%, 50%);
-            }
-        }
-
-        .h3.w2.l1 {
-            z-index: -3;
-            animation-name: h3w2l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w2l1 {
-            0% {
-                transform: translate(-50%, 25%);
-            }
-
-            14% {
-                transform: translate(-100%, 0%);
-            }
-
-            28% {
-                transform: translate(-100%, 0%);
-            }
-
-            43% {
-                transform: translate(-100%, 50%);
-            }
-
-            57% {
-                transform: translate(-50%, 75%);
-            }
-
-            71% {
-                transform: translate(-50%, 75%);
-            }
-
-            85% {
-                transform: translate(-50%, 25%);
-            }
-
-            100% {
-                transform: translate(-50%, 25%);
-            }
-        }
-
-        .h3.w2.l2 {
-            z-index: -3;
-            animation-name: h3w2l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w2l2 {
-            0% {
-                transform: translate(0%, 50%);
-            }
-
-            14% {
-                transform: translate(0%, 50%);
-            }
-
-            28% {
-                transform: translate(0%, 50%);
-            }
-
-            43% {
-                transform: translate(0%, 100%);
-            }
-
-            57% {
-                transform: translate(0%, 100%);
-            }
-
-            71% {
-                transform: translate(0%, 100%);
-            }
-
-            85% {
-                transform: translate(0%, 50%);
-            }
-
-            100% {
-                transform: translate(0%, 50%);
-            }
-        }
-
-        .h3.w2.l3 {
-            z-index: -3;
-            animation-name: h3w2l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w2l3 {
-            0% {
-                transform: translate(50%, 75%);
-            }
-
-            14% {
-                transform: translate(100%, 100%);
-            }
-
-            28% {
-                transform: translate(100%, 100%);
-            }
-
-            43% {
-                transform: translate(100%, 150%);
-            }
-
-            57% {
-                transform: translate(50%, 125%);
-            }
-
-            71% {
-                transform: translate(50%, 125%);
-            }
-
-            85% {
-                transform: translate(50%, 75%);
-            }
-
-            100% {
-                transform: translate(50%, 75%);
-            }
-        }
-
-        .h3.w3.l1 {
-            z-index: -3;
-            animation-name: h3w3l1;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w3l1 {
-            0% {
-                transform: translate(-100%, 50%);
-            }
-
-            14% {
-                transform: translate(-150%, 25%);
-            }
-
-            28% {
-                transform: translate(-200%, 50%);
-            }
-
-            43% {
-                transform: translate(-200%, 100%);
-            }
-
-            57% {
-                transform: translate(-150%, 125%);
-            }
-
-            71% {
-                transform: translate(-100%, 100%);
-            }
-
-            85% {
-                transform: translate(-100%, 50%);
-            }
-
-            100% {
-                transform: translate(-100%, 50%);
-            }
-        }
-
-        .h3.w3.l2 {
-            z-index: -3;
-            animation-name: h3w3l2;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w3l2 {
-            0% {
-                transform: translate(-50%, 75%);
-            }
-
-            14% {
-                transform: translate(-50%, 75%);
-            }
-
-            28% {
-                transform: translate(-100%, 100%);
-            }
-
-            43% {
-                transform: translate(-100%, 150%);
-            }
-
-            57% {
-                transform: translate(-100%, 150%);
-            }
-
-            71% {
-                transform: translate(-50%, 125%);
-            }
-
-            85% {
-                transform: translate(-50%, 75%);
-            }
-
-            100% {
-                transform: translate(-50%, 75%);
-            }
-        }
-
-        .h3.w3.l3 {
-            z-index: -3;
-            animation-name: h3w3l3;
-            animation-timing-function: ease;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes h3w3l3 {
-            0% {
-                transform: translate(0%, 100%);
-            }
-
-            14% {
-                transform: translate(50%, 125%);
-            }
-
-            28% {
-                transform: translate(0%, 150%);
-            }
-
-            43% {
-                transform: translate(0%, 200%);
-            }
-
-            57% {
-                transform: translate(-50%, 175%);
-            }
-
-            71% {
-                transform: translate(0%, 150%);
-            }
-
-            85% {
-                transform: translate(0%, 100%);
-            }
-
-            100% {
-                transform: translate(0%, 100%);
-            }
-        }
+        /* Card hover glow */
+        .card-glow:hover { box-shadow: 0 0 0 1px rgba(96,165,250,0.3), 0 8px 32px rgba(96,165,250,0.08); }
     </style>
-
-    <style>
-        .footer {
-            position: relative;
-            width: 100%;
-            bottom: 0;
-        }
-
-        .overlay-container {
-            position: relative;
-            width: 100%;
-            height: auto;
-        }
-
-        .overlay-img {
-            position: relative;
-            width: 100%;
-            height: 390px;
-        }
-
-        .bottom-img {
-            width: 100%;
-            height: 390px;
-        }
-
-        .x-class {
-            width: 100%;
-            height: 900px;
-        }
-        .footer {
-            position: fixed !important;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-        }
-
-        .img-doc {
-            box-shadow: 7px 7px 7px grey;    
-        }
-    </style>
-
-    <!-- Include Highlight.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
-
-    <!-- Include Highlight.js JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-2">
-        <a class="navbar-brand" href="/">ПРОГРАММНО </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/about">О программе</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/published-works">Список опубликованных работ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/api">Апи</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/code">Код Питон</a>
-                </li>
+    <!-- Page loader -->
+    <div id="page-loader">
+        <div class="flex flex-col items-center gap-5">
+            <div class="relative">
+                <div class="w-14 h-14 bg-blue-600/10 rounded-2xl border border-blue-500/20 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="absolute -inset-2 rounded-[24px] border-[2px] border-blue-500/15"></div>
+                <div class="absolute -inset-2 rounded-[24px] border-[2px] border-transparent border-t-blue-500 animate-spin" style="animation-duration:0.9s"></div>
+            </div>
+            <div class="text-center">
+                <p class="text-white font-bold text-sm tracking-[0.25em] uppercase">ПРОГРАММНО</p>
+                <div class="flex items-center justify-center gap-1.5 mt-3">
+                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+                    <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+                    <span class="w-1.5 h-1.5 bg-blue-300 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="/introduction">Введение</a>
-                </li>
-            </ul>
+    <!-- Navbar -->
+    <nav class="bg-gray-900/95 dark:bg-gray-950/95 backdrop-blur-md text-white shadow-xl sticky top-0 z-50 border-b border-gray-700/70 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between h-16">
+
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center group-hover:bg-blue-400 transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <span class="text-base sm:text-lg font-bold text-blue-400 group-hover:text-blue-300 tracking-wide" data-i18n="app_title">ПРОГРАММНО</span>
+                </a>
+
+                <!-- Desktop menu -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="/about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_about">О программе</a>
+                    <a href="/published-works" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_works">Опубликованные работы</a>
+                    <a href="/api" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-all">API</a>
+                    <a href="/code" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_code">Python Код</a>
+                    <a href="/introduction" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_intro">Введение</a>
+                </div>
+
+                <!-- Right controls -->
+                <div class="flex items-center space-x-2">
+                    <!-- Language switcher -->
+                    <div class="hidden sm:flex items-center bg-gray-800 rounded-lg p-1 space-x-0.5">
+                        <button onclick="setLanguage('ru')" id="lang-ru" class="lang-btn px-2 py-1 text-xs font-semibold rounded-md transition-all">РУ</button>
+                        <button onclick="setLanguage('uz')" id="lang-uz" class="lang-btn px-2 py-1 text-xs font-semibold rounded-md transition-all">УЗ</button>
+                        <button onclick="setLanguage('en')" id="lang-en" class="lang-btn px-2 py-1 text-xs font-semibold rounded-md transition-all">EN</button>
+                    </div>
+
+                    <!-- Theme toggle -->
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-all text-gray-300 hover:text-white" title="Toggle theme">
+                        <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                        <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Mobile hamburger -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-all">
+                        <svg id="menu-open" class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg id="menu-close" class="w-5 h-5 text-gray-300 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-3 animate-slide-down">
+                <div class="flex flex-col space-y-1 pt-2 border-t border-gray-700">
+                    <a href="/about" class="block px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_about">О программе</a>
+                    <a href="/published-works" class="block px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_works">Опубликованные работы</a>
+                    <a href="/api" class="block px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-all">API</a>
+                    <a href="/code" class="block px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_code">Python Код</a>
+                    <a href="/introduction" class="block px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-all" data-i18n="nav_intro">Введение</a>
+                    <!-- Language (mobile) -->
+                    <div class="flex space-x-2 px-3 pt-2">
+                        <button onclick="setLanguage('ru')" class="lang-btn flex-1 py-1.5 text-xs font-semibold rounded-md transition-all border border-gray-600">РУ</button>
+                        <button onclick="setLanguage('uz')" class="lang-btn flex-1 py-1.5 text-xs font-semibold rounded-md transition-all border border-gray-600">УЗ</button>
+                        <button onclick="setLanguage('en')" class="lang-btn flex-1 py-1.5 text-xs font-semibold rounded-md transition-all border border-gray-600">EN</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
-    {% block content %}
-    <!-- Content will be injected here -->
-    {% endblock %}
-    <hr>
-    <footer class="bg-dark mt-2 copyright l-0 footer">
-        <!-- Copyright -->
-        <div class="text-center p-3 text-white">
-            © 2024 Авторское право:
-            <a class="text-white fw-bold" target="_blank" href="https://t.me/surxon88">Холлиев Фахриддин</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
-    </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- Main content -->
+    <main class="flex-1 animate-fade-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 dark:bg-gray-950 text-gray-400 border-t border-gray-700 dark:border-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p class="text-sm" data-i18n="footer_copy">© 2024 Авторское право:</p>
+            <a href="https://t.me/surxon88" target="_blank" class="text-blue-400 hover:text-blue-300 font-semibold text-sm transition-colors" data-i18n="footer_author">Холлиев Фахриддин</a>
+            <div class="flex items-center space-x-1 text-xs text-gray-500">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                <span>Python + Django</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS (kept for jQuery compatibility in child templates) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
+        // ─── LaTeX / MathJax parameter mapping ───
+        const PARAM_MATH = {
+            'alpha': '\\(\\alpha\\)',   'alfa':  '\\(\\alpha\\)',
+            'beta':  '\\(\\beta\\)',    'bet':   '\\(\\beta\\)',
+            'beta1': '\\(\\beta_1\\)',  'beta2': '\\(\\beta_2\\)',
+            'gamma': '\\(\\gamma\\)',   'gama':  '\\(\\gamma\\)',  'gam': '\\(\\gamma\\)',
+            'tau':   '\\(\\tau\\)',     'w':     '\\(\\omega\\)',
+            'C0':    '\\(C_0\\)',       'vm':    '\\(v_m\\)',       'Dm': '\\(D_m\\)',
+            'tmax':  '\\(t_{\\max}\\)', 'tetim': '\\(\\theta_{im}\\)', 'tetm': '\\(\\theta_m\\)',
+            'kd':    '\\(k_d\\)',       'r1':    '\\(r_1\\)',       'r2': '\\(r_2\\)',
+            'N':     '\\(N\\)',         'n':     '\\(n\\)',         'h':  '\\(h\\)',
+        };
+
+        function renderParamMath(root) {
+            const scope = root || document;
+            let changed = false;
+            scope.querySelectorAll('[data-param]').forEach(el => {
+                const key = el.getAttribute('data-param');
+                if (PARAM_MATH[key]) {
+                    el.innerHTML = PARAM_MATH[key];
+                    changed = true;
+                }
+            });
+            if (changed && window.MathJax) {
+                (MathJax.startup?.promise ?? Promise.resolve())
+                    .then(() => MathJax.typesetPromise?.());
+            }
+        }
+
+        // ─── Page loader ───
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.transition = 'opacity 0.4s ease';
+                setTimeout(() => loader.remove(), 400);
+            }
+        });
+
+        // ─── Theme ───
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('icon-moon')?.classList.remove('hidden');
+                document.getElementById('icon-sun')?.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('icon-moon')?.classList.add('hidden');
+                document.getElementById('icon-sun')?.classList.remove('hidden');
+            }
+        }
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            const theme = isDark ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+            applyTheme(theme);
+        }
+
+        // ─── Mobile menu ───
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const open  = document.getElementById('menu-open');
+            const close = document.getElementById('menu-close');
+            menu.classList.toggle('hidden');
+            open?.classList.toggle('hidden');
+            close?.classList.toggle('hidden');
+        }
+
+        // ─── Language / i18n ───
+        const translations = {
+            ru: {
+                app_title:   'ПРОГРАММНО',
+                nav_about:   'О программе',
+                nav_works:   'Опубликованные работы',
+                nav_code:    'Python Код',
+                nav_intro:   'Введение',
+                footer_copy: '© 2024 Авторское право:',
+                footer_author: 'Холлиев Фахриддин',
+                // index
+                hero_title:  'ПРОГРАММНО – ВЫЧИСЛИТЕЛЬНАЯ СРЕДА ПО РАСЧЕТУ АНОМАЛЬНОГО ПЕРЕНОСА ВЕЩЕСТВА В ПОРИСТЫХ СРЕДАХ',
+                btn_start:   'НАЧАТЬ',
+                // selects
+                sel_heading: 'АЛГОРИТМИЗАЦИЯ РАСЧЕТОВ ПОКАЗАТЕЛЕЙ ПЕРЕНОСА ВЕЩЕСТВ',
+                sel_type:    'Выбор типа задачи:',
+                sel_char:    'Характеристика работы:',
+                btn_params:  'ИСХОДНЫЕ ДАННЫЕ',
+                btn_exit:    'ВЫХОД',
+                // answer
+                ans_heading: 'РАЗРАБОТКА РАСЧЕТНОЙ СРЕДЫ ПОКАЗАТЕЛЕЙ ПЕРЕНОСА ВЕЩЕСТВ',
+                btn_solve:   'РЕШЕНИЕ',
+                btn_home:    'ГЛАВНАЯ',
+                lbl_wait:    'Результаты будут готовы примерно через',
+                lbl_min:     'минут',
+                // about
+                abt_heading: 'Авторы программы',
+            },
+            uz: {
+                app_title:   'DASTURIY',
+                nav_about:   'Dastur haqida',
+                nav_works:   'Nashr etilgan ishlar',
+                nav_code:    'Python Kodi',
+                nav_intro:   'Kirish',
+                footer_copy: '© 2024 Mualliflik huquqi:',
+                footer_author: 'Xolliyev Faxriddin',
+                hero_title:  'POROZ MUHITLARDA MODDANING ANORMAL KO\'CHISHINI HISOBLASH DASTURIY-HISOBLASH MUHITI',
+                btn_start:   'BOSHLASH',
+                sel_heading: 'MODDALAR KO\'CHISH KO\'RSATKICHLARINI HISOBLASH ALGORITMLARI',
+                sel_type:    'Masala turini tanlang:',
+                sel_char:    'Dastur xususiyatlari:',
+                btn_params:  'DASTLABKI MA\'LUMOTLAR',
+                btn_exit:    'CHIQISH',
+                ans_heading: 'MODDA KO\'CHISH KO\'RSATKICHLARI HISOBLASH MUHITINI ISHLAB CHIQISH',
+                btn_solve:   'HISOBLASH',
+                btn_home:    'BOSH SAHIFA',
+                lbl_wait:    'Natijalar taxminan',
+                lbl_min:     'daqiqada tayyor bo\'ladi',
+                abt_heading: 'Dastur mualliflari',
+            },
+            en: {
+                app_title:   'MATHCALL',
+                nav_about:   'About',
+                nav_works:   'Published Works',
+                nav_code:    'Python Code',
+                nav_intro:   'Introduction',
+                footer_copy: '© 2024 Copyright:',
+                footer_author: 'Kholliev Fakhriddin',
+                hero_title:  'PROGRAMMING-COMPUTATIONAL ENVIRONMENT FOR CALCULATION OF ANOMALOUS SUBSTANCE TRANSFER IN POROUS MEDIA',
+                btn_start:   'START',
+                sel_heading: 'ALGORITHMS FOR CALCULATING SUBSTANCE TRANSFER INDICATORS',
+                sel_type:    'Select task type:',
+                sel_char:    'Program characteristics:',
+                btn_params:  'PARAMETERS',
+                btn_exit:    'EXIT',
+                ans_heading: 'DEVELOPMENT OF COMPUTATIONAL ENVIRONMENT FOR SUBSTANCE TRANSFER INDICATORS',
+                btn_solve:   'SOLVE',
+                btn_home:    'HOME',
+                lbl_wait:    'Results will be ready in approximately',
+                lbl_min:     'minutes',
+                abt_heading: 'Program Authors',
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'ru';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+
+            // Highlight active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('text-gray-400');
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const btnLang = btn.getAttribute('onclick')?.match(/'(\w+)'/)?.[1];
+                if (btnLang === lang) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('text-gray-400');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
             hljs.highlightAll();
+            renderParamMath();
         });
     </script>
-</body>
 
+    {% block extra_scripts %}{% endblock %}
+</body>
 </html>

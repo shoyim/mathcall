@@ -1,387 +1,141 @@
-<!-- user/templates/answer2.html -->
-
 {% extends 'layout/base.html' %}
 
-{% block title %}
-Аномальный перенос с много – членными дробными производными
-{% endblock %}
+{% block title %}Аномальный перенос с многочленными дробными производными{% endblock %}
 
 {% block content %}
-<div class="container" id="form">
-    <h3 class="text-center display-8">РАЗРАБОТКА РАСЧЕТНОЙ СРЕДЫ ПОКАЗАТЕЛЕЙ ПЕРЕНОСА ВЕЩЕСТВ</h3>
-    <form id="parametersForm" class="mt-5" method="get">
+<div class="max-w-4xl mx-auto px-4 py-8">
 
-        <input type="text" name="options" value="{{ item_id }}" hidden>
-        {% for x, y in description.items %}
-        <div class="form-group row mt-2">
-            <label for="{{ x }}" class="col-sm-6 col-form-label">{{ y.name }} ({{ x }}):</label>
-            <div class="col-sm-6">
-                {% if y.value|length > 1 %}
-                <input type="number" class="form-control" id="{{ x }}" name="{{ x }}" value="{{ y.value.0 }}"
-                    min="{{ y.value.0 }}" max="{{ y.value.1 }}" required>
-                {% else %}
-                <input type="number" class="form-control" id="{{ x }}" name="{{ x }}" value="{{ y.value }}" required>
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
-        <div class="d-flex justify-content-between mt-5">
-            <button type="button" onclick="submitData()" class="btn btn-primary">РЕШЕНИЕ</button>
-            <a href="/" class="btn btn-secondary">ГЛАВНАЯ</a>
-            <a href="/selects/" class="btn btn-success">ВЫХОД</a>
-            <!-- Ensure href attribute ends with a trailing slash if APPEND_SLASH=True -->
-        </div>
-    </form>
-</div>
-<div class="loader p-2 m-2" style="position: relative;">
-    <p style="font-size: 20px;">Результаты программы будут объявлены в ближайшее время, пожалуйста, подождите, примерное
-        время ожидания: <span id="vall"></span> минута</p>
-</div>
-<div class="loader">
-    <div id="loader" class="d-flex justify-content-center align-items-center" style="height: 100vh;display: none;">
-        <div class="h1Container">
+    <div id="form-section">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+            <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-900 dark:text-white mb-6" data-i18n="ans_heading">
+                РАЗРАБОТКА РАСЧЕТНОЙ СРЕДЫ ПОКАЗАТЕЛЕЙ ПЕРЕНОСА ВЕЩЕСТВ
+            </h2>
 
-            <div class="cube h1 w1 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
+            <form id="parametersForm" method="get">
+                <input type="hidden" name="options" value="{{ item_id }}">
 
-            <div class="cube h1 w1 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w1 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w2 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w2 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w2 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w3 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w3 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w3 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-        </div>
-
-        <div class="h2Container">
-
-            <div class="cube h2 w1 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w1 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w1 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w2 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w2 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w2 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w3 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w3 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w3 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-        </div>
-
-        <div class="h3Container">
-
-            <div class="cube h3 w1 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w1 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w1 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w2 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w2 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w2 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w3 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w3 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w3 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="content">
-    <div class="row m-2">
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="card-header">Профили концентрации См по х</h3>
-                <div class="card-body">
-                    <canvas id="distributionChart"></canvas>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for x, y in description.items %}
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <label for="{{ x }}" class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1 flex-wrap">
+                            <span>{{ y.name }}</span>
+                            <span class="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs" data-param="{{ x }}">{{ x }}</span>
+                        </label>
+                        <input type="number" step="any"
+                               class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                               id="{{ x }}" name="{{ x }}" value="{{ y.value }}" required>
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="card-header">Динамики концентрации С по времени</h3>
-                <div class="card-body">
-                    <canvas id="dynamicChart"></canvas>
+                <div class="flex flex-col sm:flex-row gap-3 mt-8">
+                    <button type="button" onclick="submitData()"
+                            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-md transition-all"
+                            data-i18n="btn_solve">РЕШЕНИЕ</button>
+                    <a href="/" class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-xl transition-all" data-i18n="btn_home">ГЛАВНАЯ</a>
+                    <a href="/selects/" class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 bg-green-700 hover:bg-green-600 text-white font-semibold rounded-xl transition-all" data-i18n="btn_exit">ВЫХОД</a>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    {% include '_loader.html' %}
+
+    <div id="content-section" class="hidden mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Профили концентрации C по x</h3>
+                <canvas id="distributionChart"></canvas>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Динамика концентрации C по времени</h3>
+                <canvas id="dynamicChart"></canvas>
             </div>
         </div>
 
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Скачать данные</h3>
+            <div class="flex flex-wrap gap-2">
+                <a class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/C2.csv">C2</a>
+                <a class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/C3.csv">C3</a>
+                <a class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/C4.csv">C4</a>
+            </div>
+        </div>
     </div>
-
-    <div class="m-4">
-        <a class="btn btn-primary" href="/static/data/C2.csv">Данные C2</a>
-        <a class="btn btn-primary" href="/static/data/C3.csv">Данные C3</a>
-        <a class="btn btn-primary" href="/static/data/C4.csv">Данные C4</a>
-    </div>
-    <br><br>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    window.addEventListener('beforeunload', function (event) {
-        // Browser doimo "returnValue" xususiyatini talab qiladi
-        event.preventDefault();
-        event.returnValue = '';
-    });
-    $("#content").hide();
-    $(".loader").hide();
+    let progressInterval;
+    const COLORS = ['rgba(239,68,68,1)','rgba(59,130,246,1)','rgba(34,197,94,1)'];
+    const CHART_OPTS = {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } },
+        scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } }
+    };
 
     function submitData() {
-        const data = $("#parametersForm").serialize();
-        const varr = $("#tmax").val() / 1000;
-        $("#vall").html(varr);
+        const data = $('#parametersForm').serialize();
+        const tmax = parseFloat(document.getElementById('tmax')?.value || 900);
+        document.getElementById('form-section').classList.add('hidden');
+        document.getElementById('loader-wrapper').classList.remove('hidden');
+        document.getElementById('loader-wrapper').classList.add('flex');
+        document.getElementById('vall').textContent = Math.round(tmax / 1000 * 10) / 10;
 
-        $(".loader").show();
-        $("#form").hide();
+        let progress = 0;
+        progressInterval = setInterval(() => {
+            progress = Math.min(progress + 0.5, 90);
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }, 300);
 
         $.ajax({
-            url: "/result/",
-            type: "POST",
-            data: data,
+            url: '/result/', type: 'POST', data: data,
             success: function (data) {
-                createChart(data)
-                document.getElementById('loader').classList.add('hide-important');
-                $("#content").show();
+                clearInterval(progressInterval);
+                document.getElementById('progress-bar').style.width = '100%';
+                setTimeout(() => {
+                    document.getElementById('loader-wrapper').classList.add('hidden');
+                    document.getElementById('loader-wrapper').classList.remove('flex');
+                    document.getElementById('content-section').classList.remove('hidden');
+                    buildCharts(data);
+                }, 400);
+            },
+            error: function () {
+                clearInterval(progressInterval);
+                document.getElementById('loader-wrapper').classList.add('hidden');
+                document.getElementById('form-section').classList.remove('hidden');
+                alert('Ошибка вычисления.');
             }
         });
     }
 
-
-    function createChart(data) {
-        const x = data.x;
-        const y = data.y;
-        const C = data.C;
+    function buildCharts(data) {
+        const x = data.x, y = data.y, C = data.C;
         const tmax = y.length - 1;
 
-        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
-        new Chart(distributionCtx, {
+        new Chart(document.getElementById('distributionChart'), {
             type: 'line',
             data: {
                 labels: x,
-                datasets: [{
-                        label: `C(t = ${tmax} s)`,
-                        data: C[tmax],
-                        borderColor: 'red',
-                        backgroundColor: 'red',
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
-                        label: `C(t = ${2*tmax/3} s)`,
-                        data: C[2 * tmax / 3],
-                        borderColor: 'blue',
-                        backgroundColor: 'blue',
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
-                        label: `C(t = ${tmax/3} s)`,
-                        data: C[tmax / 3],
-                        borderColor: 'green',
-                        backgroundColor: 'green',
-                        fill: false,
-                        tension: 0.1
-                    }
+                datasets: [
+                    { label: `C(t=${tmax} s)`,       data: C[tmax],       borderColor: COLORS[0], borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
+                    { label: `C(t=${2*tmax/3|0} s)`, data: C[2*tmax/3|0], borderColor: COLORS[1], borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
+                    { label: `C(t=${tmax/3|0} s)`,   data: C[tmax/3|0],   borderColor: COLORS[2], borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
                 ]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'X координата (м)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Концентрация (м^3/м^3)'
-                        }
-                    }
-                }
-            }
+            options: { ...CHART_OPTS, scales: { x: { ...CHART_OPTS.scales.x, title: { display: true, text: 'Координата (м)', color: '#6b7280' } }, y: { ...CHART_OPTS.scales.y, title: { display: true, text: 'Концентрация (м³/м³)', color: '#6b7280' } } } }
         });
 
-        // 2. Vaqt bo'yicha dinamik diagramma
-        const C2 = data.C2;
-        const C3 = data.C3;
-        const C4 = data.C4;
-
-        const dynamicCtx = document.getElementById('dynamicChart').getContext('2d');
-        new Chart(dynamicCtx, {
+        new Chart(document.getElementById('dynamicChart'), {
             type: 'line',
             data: {
                 labels: y,
-                datasets: [{
-                        label: 'C (x = 0.1 m)',
-                        data: C2,
-                        borderColor: 'purple',
-                        backgroundColor: 'purple',
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'C (x = 0.3 m)',
-                        data: C3,
-                        borderColor: 'orange',
-                        backgroundColor: 'orange',
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'C (x = 0.5 m)',
-                        data: C4,
-                        borderColor: 'brown',
-                        backgroundColor: 'brown',
-                        fill: false,
-                        tension: 0.1
-                    }
+                datasets: [
+                    { label: 'C (x=0.1 m)', data: data.C2, borderColor: 'rgba(168,85,247,1)',  borderWidth: 1.5, fill: false, tension: 0.1, pointRadius: 0 },
+                    { label: 'C (x=0.3 m)', data: data.C3, borderColor: 'rgba(251,146,60,1)',  borderWidth: 1.5, fill: false, tension: 0.1, pointRadius: 0 },
+                    { label: 'C (x=0.5 m)', data: data.C4, borderColor: 'rgba(161,140,105,1)', borderWidth: 1.5, fill: false, tension: 0.1, pointRadius: 0 },
                 ]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Время t(s)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Концентрация (м^3/м^3)'
-                        }
-                    }
-                }
-            }
+            options: { ...CHART_OPTS, scales: { x: { ...CHART_OPTS.scales.x, title: { display: true, text: 'Время (с)', color: '#6b7280' } }, y: { ...CHART_OPTS.scales.y, title: { display: true, text: 'Концентрация (м³/м³)', color: '#6b7280' } } } }
         });
     }
 </script>

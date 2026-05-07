@@ -1,155 +1,145 @@
-<!-- home/templates/home/introduction.html -->
 {% extends 'layout/base.html' %}
 
-{% block title %}
-Информация о программе
-{% endblock %}
+{% block title %}Введение{% endblock %}
 
 {% block content %}
-<h3 class="text-center">Информация о программе</h3>
+<div class="max-w-5xl mx-auto px-4 py-8">
 
-<div class="d-flex justify-content-center">
-    <img class="w-75" src="/static/docs/menu.png" alt="navbar img not found" class="img-fluid img-doc">
+    <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
+        Информация о программе
+    </h1>
+
+    <!-- Screenshot -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+        <img src="/static/docs/menu.png" class="w-full object-cover rounded-xl img-doc" alt="Навигация программы" onerror="this.style.display='none'">
+    </div>
+
+    <!-- Intro text -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Программное обеспечение по расчету аномального переноса вещества в пористых средах
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            Данное программное обеспечение разработано для моделирования и расчета <strong class="text-blue-600 dark:text-blue-400">аномальных изменений</strong> в
+            пористых средах. Оно предоставляет возможности для анализа и предсказания поведения веществ при их перемещении в
+            таких средах, что имеет важное значение в научных исследованиях и инженерных расчетах.
+        </p>
+    </div>
+
+    <!-- Sections grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        {% for section in sections_data %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-400 dark:hover:border-blue-500 transition-all">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{{ section.title }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ section.desc }}</p>
+        </div>
+        {% empty %}
+        <!-- Static sections -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-400 dark:hover:border-blue-500 transition-all">
+            <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-blue-500"></div><h3 class="font-semibold text-gray-900 dark:text-white">О программе</h3></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Содержит общую информацию о программе, её назначении, методах и алгоритмах, а также сведения о разработчиках.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-400 dark:hover:border-blue-500 transition-all">
+            <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-purple-500"></div><h3 class="font-semibold text-gray-900 dark:text-white">Список опубликованных работ</h3></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Все научные публикации и исследования, выполненные с использованием этого программного обеспечения.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-400 dark:hover:border-blue-500 transition-all">
+            <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-green-500"></div><h3 class="font-semibold text-gray-900 dark:text-white">API</h3></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Доступные API для интеграции с другими системами или автоматизации задач. Документация по их использованию.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-400 dark:hover:border-blue-500 transition-all">
+            <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-yellow-500"></div><h3 class="font-semibold text-gray-900 dark:text-white">Python Код</h3></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Исходный код на Python с пояснениями. Пользователи могут адаптировать код под свои задачи.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Getting started -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-6 mb-6">
+        <p class="text-white leading-relaxed mb-4">
+            Чтобы начать работу с программой, нажмите кнопку <strong>«Начать»</strong>.
+            Это перенаправит вас в основной интерфейс, где можно выполнять расчеты и моделирование.
+        </p>
+        <img src="/static/docs/step2.png" class="w-full rounded-xl shadow-lg img-doc" alt="Шаг 2" onerror="this.style.display='none'">
+    </div>
+
+    <!-- Capabilities -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Возможности программы</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for cap in "расчёт|визуализация|api|настройка" %}
+            {% empty %}
+            <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Расчет и моделирование аномального переноса вещества
+            </div>
+            {% endfor %}
+            <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Расчет и моделирование аномального переноса вещества
+            </div>
+            <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Анализ и визуализация результатов
+            </div>
+            <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Интеграция с другими системами через API
+            </div>
+            <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Гибкая настройка параметров моделирования
+            </div>
+        </div>
+    </div>
+
+    <!-- Task types -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-5">Поддерживаемые типы задач</h2>
+
+        <!-- Model 1 -->
+        <div class="mb-5">
+            <h3 class="font-semibold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center">1</span>
+                Аномальный перенос вещества в двухзонной фрактальной среде
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Объемная концентрация вещества <span data-param="C0" class="ml-1 font-mono text-blue-600 dark:text-blue-400">C0</span></div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Скорость движения раствора <span data-param="vm" class="ml-1 font-mono text-blue-600 dark:text-blue-400">vm</span></div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Коэффициент диффузии <span data-param="Dm" class="ml-1 font-mono text-blue-600 dark:text-blue-400">Dm</span></div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Количество интервалов <span data-param="N" class="ml-1 font-mono text-blue-600 dark:text-blue-400">N</span></div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Шаги сетки <span data-param="tau" class="ml-1 font-mono text-blue-600 dark:text-blue-400">tau</span>, <span data-param="h" class="font-mono text-blue-600 dark:text-blue-400">h</span></div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Дробные производные <span data-param="alpha" class="ml-1 font-mono text-blue-600 dark:text-blue-400">alpha</span>, <span data-param="beta" class="font-mono text-blue-600 dark:text-blue-400">beta</span></div>
+            </div>
+        </div>
+
+        <!-- Model 2 -->
+        <div class="mb-5">
+            <h3 class="font-semibold text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-bold flex items-center justify-center">2</span>
+                Аномальный перенос с учетом адсорбционных эффектов
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Коэффициент адсорбции kd</div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Коэффициент дисперсии Dm</div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Пористость в mobile/immobile зонах</div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Дробные производные alpha, bet</div>
+            </div>
+        </div>
+
+        <!-- Model 3 -->
+        <div>
+            <h3 class="font-semibold text-green-600 dark:text-green-400 mb-3 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs font-bold flex items-center justify-center">3</span>
+                Аномальный перенос с многочленными дробными производными
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>Дробная производная по coordinate gamma</div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>Производные по времени alfa, beta1, beta2</div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>Положительные константы r1, r2</div>
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 py-1 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>Коэффициент диффузии Dm</div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="container">
-    <h1 class="mt-5">Программное обеспечение по расчету аномального переноса вещества в пористых средах</h1>
-
-    <p>Данное программное обеспечение разработано для моделирования и расчета <strong>аномальных изменений</strong> в
-        пористых средах. Оно предоставляет возможности для анализа и предсказания поведения веществ при их перемещении в
-        таких средах, что имеет важное значение в научных исследованиях и инженерных расчетах.</p>
-
-    <h2 class="mt-4">Основные разделы:</h2>
-    <ul>
-        <li>
-            <h4>О программе</h4>
-            <p>Этот раздел содержит общую информацию о программе, её назначении, принципах работы, используемых методах
-                и алгоритмах, а также сведения о разработчиках и их вкладе в создание программного обеспечения.</p>
-        </li>
-        <li>
-            <h4>Список опубликованных работ</h4>
-            <p>В данном разделе представлены все научные публикации и исследования, выполненные с использованием этого
-                программного обеспечения. Каждая работа сопровождается кратким описанием и ссылкой на полный текст.</p>
-        </li>
-        <li>
-            <h4>API</h4>
-            <p>Этот раздел посвящен доступным API, которые можно использовать для интеграции программного обеспечения с
-                другими системами или для автоматизации задач. Здесь также содержится документация по их использованию.
-            </p>
-        </li>
-        <li>
-            <h4>Код Питон</h4>
-            <p>В этом разделе представлен исходный код на языке Python, который используется в программном обеспечении.
-                Пользователи могут ознакомиться с кодом, понять принципы его работы и адаптировать его под свои нужды.
-            </p>
-        </li>
-        <li>
-            <h4>Введение</h4>
-            <p>Раздел "Введение" предоставляет пошаговые инструкции по началу работы с программным обеспечением. Здесь
-                описаны интерфейс программы, основные функции, и примеры использования для различных задач.</p>
-        </li>
-    </ul>
-
-    <p class="mt-4">Чтобы начать работу с программой, нажмите кнопку "Начать" в нижней части экрана. Это перенаправит
-        вас в основной интерфейс программы, где можно выполнять расчеты и моделирование.</p>
-
-    <img src="/static/docs/step2.png" alt="Step 2 img not found" class="img-fluid img-doc">
-
-    <br><br>
-    <p>
-        Данное программное обеспечение предназначено для расчета аномального переноса вещества в пористых средах.
-        Программа позволяет моделировать поведение веществ в различных условиях, что может быть полезно
-        в научных исследованиях и инженерных расчетах.
-    </p>
-    <p>
-        Основные возможности программы включают:
-    </p>
-    <ul>
-        <li>Расчет и моделирование аномального переноса вещества</li>
-        <li>Анализ и визуализация результатов</li>
-        <li>Интеграция с другими системами через API</li>
-        <li>Гибкая настройка параметров моделирования</li>
-    </ul>
-    <p>
-        Для начала работы с программой выберите необходимый тип задачи и следуйте инструкциям.
-        Поддерживаемые типы задач включают:
-    </p>
-    <ul>
-        <li>Аномальный перенос вещества в двухзонной фрактальной среде</li>
-        <li>Аномальный перенос с учетом адсорбционных эффектов и разложения вещества</li>
-        <li>Аномальный перенос с много – членными дробными производными</li>
-    </ul>
-    <p>
-        Для получения дополнительной информации ознакомьтесь с документацией или свяжитесь с разработчиками.
-    </p>
-
-    <p>Данная программа предназначена для моделирования и расчета аномального переноса вещества в пористых средах. Она
-        позволяет проводить расчеты для различных типов задач, учитывая особенности среды и параметры процесса.
-        Программа предлагает три варианта задач, каждая из которых требует ввода определенных параметров для проведения
-        расчета.</p>
-
-    <div class="mt-4">
-        <h3>Вариант 1: Аномальный перенос вещества в двухзонной фрактальной среде</h3>
-        <ul class="list-group">
-            <li class="list-group-item">Объемная концентрация вещества на входе</li>
-            <li class="list-group-item">Осредненная скорость движения раствора</li>
-            <li class="list-group-item">Коэффициент диффузии</li>
-            <li class="list-group-item">Количество интервалов</li>
-            <li class="list-group-item">Шаг сетки по направлению 1</li>
-            <li class="list-group-item">Шаг сетки по направлению 2</li>
-            <li class="list-group-item">Максимальное время</li>
-            <li class="list-group-item">Коэффициент переноса массы 1</li>
-            <li class="list-group-item">Пористость в immobile зоне</li>
-            <li class="list-group-item">Пористость в mobile зоне</li>
-            <li class="list-group-item">Коэффициент переноса массы 2</li>
-            <li class="list-group-item">Дробная производная по времени</li>
-            <li class="list-group-item">Дробная производная по координате</li>
-        </ul>
-    </div>
-
-    <div class="mt-4">
-        <h3>Вариант 2: Аномальный перенос вещества с учетом адсорбционных эффектов и разложения вещества</h3>
-        <ul class="list-group">
-            <li class="list-group-item">Объемные концентрации вещества</li>
-            <li class="list-group-item">Осредненная скорость движения раствора</li>
-            <li class="list-group-item">Коэффициент гидродинамической дисперсии</li>
-            <li class="list-group-item">Количество интервалов</li>
-            <li class="list-group-item">Шаг сетки по направлению 1</li>
-            <li class="list-group-item">Шаг сетки по направлению 2</li>
-            <li class="list-group-item">Максимальное время</li>
-            <li class="list-group-item">Коэффициент переноса массы</li>
-            <li class="list-group-item">Пористость в immobile зоне</li>
-            <li class="list-group-item">Пористость в mobile зоне</li>
-            <li class="list-group-item">Коэффициент переноса массы 2</li>
-            <li class="list-group-item">Дробная производная по времени</li>
-            <li class="list-group-item">Дробная производная по координате</li>
-            <li class="list-group-item">Доли центров адсорбции</li>
-            <li class="list-group-item">Объемная плотность пористой среды</li>
-            <li class="list-group-item">Коэффициент адсорбции</li>
-            <li class="list-group-item">Коэффициенты разложения (подвижная и неподвижная жидкость)</li>
-            <li class="list-group-item">Коэффициенты разложения (адсорбированные твердые фазы)</li>
-        </ul>
-    </div>
-
-    <div class="mt-4">
-        <h3>Вариант 3: Аномальный перенос с много–членными дробными производными</h3>
-        <ul class="list-group">
-            <li class="list-group-item">Объемные концентрации вещества</li>
-            <li class="list-group-item">Коэффициент диффузии</li>
-            <li class="list-group-item">Количество интервалов</li>
-            <li class="list-group-item">Шаг сетки по направлению 1</li>
-            <li class="list-group-item">Шаг сетки по направлению 2</li>
-            <li class="list-group-item">Максимальное время</li>
-            <li class="list-group-item">Дробная производная по координате</li>
-            <li class="list-group-item">Дробная производная по времени 1</li>
-            <li class="list-group-item">Дробная производная по времени 2</li>
-            <li class="list-group-item">Дробная производная по времени 3</li>
-            <li class="list-group-item">Положительные константы 1</li>
-            <li class="list-group-item">Положительные константы 2</li>
-        </ul>
-    </div>
-
-
-</div>
-
 {% endblock %}

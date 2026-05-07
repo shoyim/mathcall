@@ -1,16 +1,110 @@
-<!-- home/templates/home/api.html -->
 {% extends 'layout/base.html' %}
 
-{% block title %}
-API для использования программы
-{% endblock %}
+{% block title %}API Документация{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="mb-4">API-документация</h1>
-    <span class="bg-warning rounded-pill text-black p-2">POST</span><h2> {{ request.scheme }}://{{ request.get_host }}/result/</h2>
-    <a href="/static/var.docx" download>Данные, которые можно отправить</a>
-    <p>Oтправьте <code>options</code> в качестве значений на URL-адрес, если это применимо.</p>
-</div>
+<div class="max-w-4xl mx-auto px-4 py-8">
 
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">API Документация</h1>
+    <p class="text-gray-500 dark:text-gray-400 mb-8">Интерфейс для программного взаимодействия с вычислительной средой</p>
+
+    <!-- Endpoint card -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="px-3 py-1 bg-yellow-400 text-black text-sm font-bold rounded-lg">POST</span>
+            <code class="text-lg font-mono text-blue-600 dark:text-blue-400 break-all">{{ request.scheme }}://{{ request.get_host }}/result/</code>
+        </div>
+        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+            Отправьте параметр <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded font-mono text-sm">options</code> вместе с другими параметрами на этот URL.
+        </p>
+        <a href="/static/var.docx" download class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/></svg>
+            Скачать описание параметров
+        </a>
+    </div>
+
+    <!-- Parameters by model -->
+    <div class="space-y-4">
+        <!-- Model 1 -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800 flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                <h2 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 rounded text-xs font-mono">options=1</span>
+                    Двухзонная фрактальная среда
+                </h2>
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="p-4 hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700"><th class="text-left pb-2 pr-4 font-medium">Параметр</th><th class="text-left pb-2 pr-4 font-medium">Описание</th><th class="text-left pb-2 font-medium">По умолчанию</th></tr></thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="C0">C0</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Объемная концентрация на входе</td><td class="py-2 text-gray-500 font-mono text-xs">0.1</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="vm">vm</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Скорость движения раствора</td><td class="py-2 text-gray-500 font-mono text-xs">1e-4</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="Dm">Dm</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Коэффициент диффузии</td><td class="py-2 text-gray-500 font-mono text-xs">1e-5</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="n">n</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Количество интервалов</td><td class="py-2 text-gray-500 font-mono text-xs">20</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="tau">tau</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Шаг по времени</td><td class="py-2 text-gray-500 font-mono text-xs">1</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="h">h</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Шаг по пространству</td><td class="py-2 text-gray-500 font-mono text-xs">0.1</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="tmax">tmax</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Максимальное время</td><td class="py-2 text-gray-500 font-mono text-xs">2700</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="alpha">alpha</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Дробная производная по времени</td><td class="py-2 text-gray-500 font-mono text-xs">0.9</td></tr>
+                            <tr><td class="py-2 pr-4 text-blue-600 dark:text-blue-400 text-sm" data-param="bet">bet</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Дробная производная по координате</td><td class="py-2 text-gray-500 font-mono text-xs">2</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model 2 -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-4 bg-purple-50 dark:bg-purple-900/20 border-b border-purple-100 dark:border-purple-800 flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                <h2 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300 rounded text-xs font-mono">options=2</span>
+                    Адсорбция и разложение вещества
+                </h2>
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="p-4 hidden">
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">Дополнительно к параметрам модели 1, используется <code class="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">kd</code> — коэффициент адсорбции (по умолчанию: <code class="font-mono text-xs">1e-4</code>).</p>
+            </div>
+        </div>
+
+        <!-- Model 3 -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-4 bg-green-50 dark:bg-green-900/20 border-b border-green-100 dark:border-green-800 flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                <h2 class="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300 rounded text-xs font-mono">options=3</span>
+                    Многочленные дробные производные
+                </h2>
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="p-4 hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700"><th class="text-left pb-2 pr-4 font-medium">Параметр</th><th class="text-left pb-2 pr-4 font-medium">Описание</th><th class="text-left pb-2 font-medium">По умолчанию</th></tr></thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                            <tr><td class="py-2 pr-4 text-green-600 dark:text-green-400 text-sm" data-param="gamma">gamma</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Дробная производная по координате</td><td class="py-2 text-gray-500 font-mono text-xs">2</td></tr>
+                            <tr><td class="py-2 pr-4 text-green-600 dark:text-green-400 text-sm" data-param="alfa">alfa</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Дробная производная по времени 1</td><td class="py-2 text-gray-500 font-mono text-xs">1</td></tr>
+                            <tr><td class="py-2 pr-4 text-green-600 dark:text-green-400 text-sm" data-param="beta1">beta1</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Дробная производная по времени 2</td><td class="py-2 text-gray-500 font-mono text-xs">0.7</td></tr>
+                            <tr><td class="py-2 pr-4 text-green-600 dark:text-green-400 text-sm" data-param="beta2">beta2</td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Дробная производная по времени 3</td><td class="py-2 text-gray-500 font-mono text-xs">0.5</td></tr>
+                            <tr><td class="py-2 pr-4 text-green-600 dark:text-green-400 text-sm"><span data-param="r1">r1</span>, <span data-param="r2">r2</span></td><td class="py-2 pr-4 text-gray-600 dark:text-gray-300">Положительные константы</td><td class="py-2 text-gray-500 font-mono text-xs">1.5, 1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Response format -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mt-6">
+        <h2 class="font-semibold text-gray-900 dark:text-white mb-4">Формат ответа (JSON)</h2>
+        <pre class="bg-gray-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto"><code class="language-json">{
+  "x": [0.0, 0.1, 0.2, ...],
+  "y": [0, 1, 2, ...],
+  "Cm_tmax": [...],
+  "Cim_tmax": [...],
+  "Cm2": [...],
+  "tmax": 900
+}</code></pre>
+    </div>
+</div>
 {% endblock %}

@@ -1,456 +1,196 @@
-<!-- home/templates/home/index.html -->
-
 {% extends 'layout/base.html' %}
 
-{% block title %}
-Аномальный перенос вещества в двухзонной фрактальной среде
-{% endblock %}
+{% block title %}Аномальный перенос – двухзонная фрактальная среда{% endblock %}
 
 {% block content %}
-<div class="container" id="form">
-    <h3 class="text-center display-8">РАЗРАБОТКА РАСЧЕТНОЙ СРЕДЫ ПОКАЗАТЕЛЕЙ ПЕРЕНОСА ВЕЩЕСТВ</h3>
-    <form id="parametersForm" class="mt-5" method="get">
+<div class="max-w-4xl mx-auto px-4 py-8">
 
-        <input type="text" name="options" value="{{ item_id }}" hidden>
-        {% for x, y in description.items %}
-        <div class="form-group row mt-2">
-            <label for="{{ x }}" class="col-sm-6 col-form-label">{{ y.name }} ({{ x }}):</label>
-            <div class="col-sm-6">
-                {% if y.value|length > 1 %}
-                <input type="number" class="form-control" id="{{ x }}" name="{{ x }}" value="{{ y.value.0 }}"
-                    min="{{ y.value.0 }}" max="{{ y.value.1 }}" required>
-                {% else %}
-                <input type="number" class="form-control" id="{{ x }}" name="{{ x }}" value="{{ y.value }}" required>
-                {% endif %}
-            </div>
+    <!-- Form section -->
+    <div id="form-section">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+            <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-900 dark:text-white mb-6" data-i18n="ans_heading">
+                РАЗРАБОТКА РАСЧЕТНОЙ СРЕДЫ ПОКАЗАТЕЛЕЙ ПЕРЕНОСА ВЕЩЕСТВ
+            </h2>
+
+            <form id="parametersForm" method="get">
+                <input type="hidden" name="options" value="{{ item_id }}">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for x, y in description.items %}
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <label for="{{ x }}" class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1 flex-wrap">
+                            <span>{{ y.name }}</span>
+                            <span class="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs" data-param="{{ x }}">{{ x }}</span>
+                        </label>
+                        <input type="number" step="any"
+                               class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               id="{{ x }}" name="{{ x }}" value="{{ y.value }}" required>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 mt-8">
+                    <button type="button" onclick="submitData()"
+                            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-md transition-all"
+                            data-i18n="btn_solve">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01"/>
+                        </svg>
+                        РЕШЕНИЕ
+                    </button>
+                    <a href="/" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-xl transition-all" data-i18n="btn_home">
+                        ГЛАВНАЯ
+                    </a>
+                    <a href="/selects/" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-700 hover:bg-green-600 text-white font-semibold rounded-xl transition-all" data-i18n="btn_exit">
+                        ВЫХОД
+                    </a>
+                </div>
+            </form>
         </div>
-        {% endfor %}
-        <div class="d-flex justify-content-between mt-5">
-            <button type="button" onclick="submitData()" class="btn btn-primary">РЕШЕНИЕ</button>
-            <a href="/" class="btn btn-secondary">ГЛАВНАЯ</a>
-            <a href="/selects/" class="btn btn-success">ВЫХОД</a>
-            <!-- Ensure href attribute ends with a trailing slash if APPEND_SLASH=True -->
-        </div>
-    </form>
-</div>
-<div class="loader p-2 m-2" style="position: relative;">
-    <p style="font-size: 20px;">Результаты программы будут объявлены в ближайшее время, пожалуйста, подождите, примерное время ожидания: <span id="vall"></span> минута</p>
-</div>
-<div class="loader">
+    </div>
 
-    <div id="loader" class="d-flex justify-content-center align-items-center" style="height: 100vh;display: none;">
+    <!-- Loader -->
+    {% include '_loader.html' %}
 
-        <div class="h1Container">
+    <!-- Results section -->
+    <div id="content-section" class="hidden mt-6">
 
-            <div class="cube h1 w1 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
+        <!-- Chart grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Профили концентрации Cm по x</h3>
+                <canvas id="CmChart"></canvas>
             </div>
-
-            <div class="cube h1 w1 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Профили концентрации Cim по x</h3>
+                <canvas id="CimChart"></canvas>
             </div>
-
-            <div class="cube h1 w1 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Динамика концентрации Cm по времени</h3>
+                <canvas id="CmTimeChart"></canvas>
             </div>
-
-            <div class="cube h1 w2 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w2 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w2 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w3 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w3 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h1 w3 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Динамика концентрации Cim по времени</h3>
+                <canvas id="CimTimeChart"></canvas>
             </div>
         </div>
 
-        <div class="h2Container">
-
-            <div class="cube h2 w1 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w1 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w1 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w2 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w2 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w2 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w3 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w3 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h2 w3 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-        </div>
-
-        <div class="h3Container">
-
-            <div class="cube h3 w1 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w1 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w1 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w2 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w2 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w2 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w3 l1">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w3 l2">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
-            </div>
-
-            <div class="cube h3 w3 l3">
-                <div class="face top"></div>
-                <div class="face left"></div>
-                <div class="face right"></div>
+        <!-- Download buttons -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Скачать данные</h3>
+            <div class="flex flex-wrap gap-2">
+                <a class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/Cm.csv">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/></svg>
+                    Данные Cm
+                </a>
+                <a class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/Cim.csv">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/></svg>
+                    Данные Cim
+                </a>
+                <a class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/C2.csv">C2</a>
+                <a class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/C3.csv">C3</a>
+                <a class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-all" href="/static/data/C4.csv">C4</a>
             </div>
         </div>
     </div>
 </div>
-<div id="content">
-    <div class="row m-2">
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="card-header">Профили концентрации См по х</h3>
-                <div class="card-body">
-                    <canvas id="CmChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="card-header">Профили концентрации Сiм по х</h3>
-                <div class="card-body">
-                    <canvas id="CimChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <hr class="m-1">
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="card-header">Динамики концентрации Сm по времени</h3>
-                <div class="card-body">
-                    <canvas id="CmTimeChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="card-header">Динамики концентрации Сim по времени</h3>
-                <div class="card-body">
-                    <canvas id="CimTimeChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="m-4">
-        <a class="btn btn-primary" href="/static/data/Cm.csv">Данные См</a>
-        <a class="btn btn-primary" href="/static/data/Cim.csv">Данные Cim</a>
-
-        <a class="btn btn-primary" href="/static/data/C1.csv">Данные C1 </a>
-        <a class="btn btn-primary" href="/static/data/C2.csv">Данные C2 </a>
-        <a class="btn btn-primary" href="/static/data/C3.csv">Данные C3 </a>
-        <a class="btn btn-primary" href="/static/data/C4.csv">Данные C4 </a>
-    </div>
-    <br><br>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    window.addEventListener('beforeunload', function (event) {
-        // Browser doimo "returnValue" xususiyatini talab qiladi
-        event.preventDefault();
-        event.returnValue = '';
-    });
-    $("#content").hide();
-    $(".loader").hide();
+    let progressInterval;
 
     function submitData() {
+        const form = document.getElementById('parametersForm');
+        const data = $(form).serialize();
+        const tmax = parseFloat(document.getElementById('tmax')?.value || 900);
 
-        const data = $("#parametersForm").serialize();
-        $(".loader").show();
-        $("#form").hide();
+        document.getElementById('form-section').classList.add('hidden');
+        document.getElementById('loader-wrapper').classList.remove('hidden');
+        document.getElementById('loader-wrapper').classList.add('flex');
+        document.getElementById('vall').textContent = Math.round(tmax / 1000 * 10) / 10;
 
-        const varr = $("#tmax").val() / 1000;
-        $("#vall").html(varr);
+        // Animate progress bar
+        let progress = 0;
+        progressInterval = setInterval(() => {
+            progress = Math.min(progress + 0.5, 90);
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }, 300);
+
         $.ajax({
-            url: "/result/",
-            type: "POST",
+            url: '/result/',
+            type: 'POST',
             data: data,
             success: function (data) {
-                createCharts(data)
-                document.getElementById('loader').classList.add('hide-important');
-                $("#content").show();
+                clearInterval(progressInterval);
+                document.getElementById('progress-bar').style.width = '100%';
+                setTimeout(() => {
+                    document.getElementById('loader-wrapper').classList.add('hidden');
+                    document.getElementById('loader-wrapper').classList.remove('flex');
+                    document.getElementById('content-section').classList.remove('hidden');
+                    createCharts(data);
+                }, 400);
+            },
+            error: function () {
+                clearInterval(progressInterval);
+                document.getElementById('loader-wrapper').classList.add('hidden');
+                document.getElementById('form-section').classList.remove('hidden');
+                alert('Ошибка вычисления. Проверьте параметры.');
             }
-        })
+        });
     }
 
     function createCharts(data) {
-        var ctx = document.getElementById('CmChart').getContext('2d');
-        var CmChart = new Chart(ctx, {
+        const colors = ['rgba(96,165,250,1)', 'rgba(251,146,60,1)', 'rgba(167,139,250,1)'];
+
+        new Chart(document.getElementById('CmChart'), {
             type: 'line',
             data: {
                 labels: data.x,
-                datasets: [{
-                    label: `Cm (t=${data.tmax} s)`,
-                    data: data.Cm_tmax,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }, {
-                    label: `Cm (t=${2 * data.tmax / 3} s)`,
-                    data: data.Cm_2tmax3,
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    backgroundColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }, {
-                    label: `Cm (t=${data.tmax / 3} s)`,
-                    data: data.Cm_tmax3,
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
+                datasets: [
+                    { label: `Cm (t=${data.tmax} s)`,          data: data.Cm_tmax,   borderColor: colors[0], backgroundColor: colors[0]+'33', borderWidth: 2, fill: false, pointRadius: 0 },
+                    { label: `Cm (t=${2*data.tmax/3|0} s)`,    data: data.Cm_2tmax3, borderColor: colors[1], backgroundColor: colors[1]+'33', borderWidth: 2, fill: false, pointRadius: 0 },
+                    { label: `Cm (t=${data.tmax/3|0} s)`,      data: data.Cm_tmax3,  borderColor: colors[2], backgroundColor: colors[2]+'33', borderWidth: 2, fill: false, pointRadius: 0 },
+                ]
             },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
         });
 
-        var ctx2 = document.getElementById('CimChart').getContext('2d');
-        var CimChart = new Chart(ctx2, {
+        new Chart(document.getElementById('CimChart'), {
             type: 'line',
             data: {
                 labels: data.x,
-                datasets: [{
-                    label: `Cim (t=${data.tmax} s)`,
-                    data: data.Cim_tmax,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }, {
-                    label: `Cim (t=${2 * data.tmax / 3} s)`,
-                    data: data.Cim_2tmax3,
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    backgroundColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }, {
-                    label: `Cim (t=${data.tmax / 3} s)`,
-                    data: data.Cim_tmax3,
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
+                datasets: [
+                    { label: `Cim (t=${data.tmax} s)`,       data: data.Cim_tmax,   borderColor: colors[0], borderWidth: 2, fill: false, pointRadius: 0 },
+                    { label: `Cim (t=${2*data.tmax/3|0} s)`, data: data.Cim_2tmax3, borderColor: colors[1], borderWidth: 2, fill: false, pointRadius: 0 },
+                    { label: `Cim (t=${data.tmax/3|0} s)`,   data: data.Cim_tmax3,  borderColor: colors[2], borderWidth: 2, fill: false, pointRadius: 0 },
+                ]
             },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
         });
 
-        var ctx3 = document.getElementById('CmTimeChart').getContext('2d');
-        var CmTimeChart = new Chart(ctx3, {
+        new Chart(document.getElementById('CmTimeChart'), {
             type: 'line',
             data: {
                 labels: data.y,
-                datasets: [{
-                    label: 'Cm (x=0.1 m)',
-                    data: data.Cm2,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 0.2,
-                    fill: false
-                }, {
-                    label: 'Cm (x=0.3 m)',
-                    data: data.Cm3,
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    backgroundColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 0.2,
-                    fill: false
-                }, {
-                    label: 'Cm (x=0.5 m)',
-                    data: data.Cm4,
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 0.2,
-                    fill: false
-                }]
+                datasets: [
+                    { label: 'Cm (x=0.1 m)', data: data.Cm2, borderColor: colors[0], borderWidth: 1.5, fill: false, pointRadius: 0 },
+                    { label: 'Cm (x=0.3 m)', data: data.Cm3, borderColor: colors[1], borderWidth: 1.5, fill: false, pointRadius: 0 },
+                    { label: 'Cm (x=0.5 m)', data: data.Cm4, borderColor: colors[2], borderWidth: 1.5, fill: false, pointRadius: 0 },
+                ]
             },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
         });
 
-        var ctx4 = document.getElementById('CimTimeChart').getContext('2d');
-        var CimTimeChart = new Chart(ctx4, {
+        new Chart(document.getElementById('CimTimeChart'), {
             type: 'line',
             data: {
                 labels: data.y,
-                datasets: [{
-                    label: 'Cim (x=0.1 m)',
-                    data: data.Cim2,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }, {
-                    label: 'Cim (x=0.3 m)',
-                    data: data.Cim3,
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    backgroundColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }, {
-                    label: ' (x=0.5 m)',
-                    data: data.Cim4,
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
+                datasets: [
+                    { label: 'Cim (x=0.1 m)', data: data.Cim2, borderColor: colors[0], borderWidth: 1.5, fill: false, pointRadius: 0 },
+                    { label: 'Cim (x=0.3 m)', data: data.Cim3, borderColor: colors[1], borderWidth: 1.5, fill: false, pointRadius: 0 },
+                    { label: 'Cim (x=0.5 m)', data: data.Cim4, borderColor: colors[2], borderWidth: 1.5, fill: false, pointRadius: 0 },
+                ]
             },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
         });
     }
 </script>
