@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^@fxy11r%w3z1h%l#3u@&lhbpg%&m*rr$sz@0_(%p8)(3(dsaf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', 'mathmodel.uz', 'www.mathmodel.uz']
 
 
 # Application definition
