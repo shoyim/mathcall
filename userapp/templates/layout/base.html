@@ -44,7 +44,16 @@
                 displayMath: [['$$','$$']],
             },
             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
-            startup: { typeset: false }
+            startup: {
+                typeset: false,
+                ready() {
+                    MathJax.startup.defaultReady();
+                    if (window._mjRenderPending) {
+                        window._mjRenderPending = false;
+                        MathJax.typesetPromise();
+                    }
+                }
+            }
         };
     </script>
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
@@ -309,9 +318,12 @@
                     changed = true;
                 }
             });
-            if (changed && window.MathJax) {
-                (MathJax.startup?.promise ?? Promise.resolve())
-                    .then(() => MathJax.typesetPromise?.());
+            if (changed) {
+                if (window.MathJax?.typesetPromise) {
+                    MathJax.typesetPromise();
+                } else {
+                    window._mjRenderPending = true;
+                }
             }
         }
 

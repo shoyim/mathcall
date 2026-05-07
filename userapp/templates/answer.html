@@ -58,19 +58,31 @@
         <!-- Chart grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Профили концентрации Cm по x</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-4 rounded-full bg-blue-400 shrink-0"></span>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Профили концентрации C<sub>m</sub> по x</h3>
+                </div>
                 <canvas id="CmChart"></canvas>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Профили концентрации Cim по x</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-4 rounded-full bg-violet-400 shrink-0"></span>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Профили концентрации C<sub>im</sub> по x</h3>
+                </div>
                 <canvas id="CimChart"></canvas>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Динамика концентрации Cm по времени</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-4 rounded-full bg-orange-400 shrink-0"></span>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Динамика C<sub>m</sub> по времени</h3>
+                </div>
                 <canvas id="CmTimeChart"></canvas>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Динамика концентрации Cim по времени</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-4 rounded-full bg-emerald-400 shrink-0"></span>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Динамика C<sub>im</sub> по времени</h3>
+                </div>
                 <canvas id="CimTimeChart"></canvas>
             </div>
         </div>
@@ -98,17 +110,64 @@
 <script>
     let progressInterval;
 
-    function submitData() {
-        const form = document.getElementById('parametersForm');
-        const data = $(form).serialize();
-        const tmax = parseFloat(document.getElementById('tmax')?.value || 900);
+    const PALETTE = [
+        ['#60a5fa','96,165,250'],
+        ['#fb923c','251,146,60'],
+        ['#a78bfa','167,139,250'],
+    ];
 
+    function grad(ctx, rgb) {
+        const g = ctx.createLinearGradient(0, 0, 0, 280);
+        g.addColorStop(0, `rgba(${rgb},0.18)`);
+        g.addColorStop(1, `rgba(${rgb},0)`);
+        return g;
+    }
+
+    function mkChart(id, labels, sets, xLbl, yLbl) {
+        const el = document.getElementById(id);
+        const ctx = el.getContext('2d');
+        new Chart(el, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: sets.map((s, i) => ({
+                    label: s.label, data: s.data,
+                    borderColor: PALETTE[i][0],
+                    backgroundColor: grad(ctx, PALETTE[i][1]),
+                    borderWidth: 2, fill: true, tension: 0.35,
+                    pointRadius: 0, pointHoverRadius: 4,
+                    pointHoverBackgroundColor: PALETTE[i][0],
+                    pointHoverBorderColor: '#111827', pointHoverBorderWidth: 2,
+                }))
+            },
+            options: {
+                responsive: true,
+                aspectRatio: 1.5,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { labels: { color: '#9ca3af', usePointStyle: true, pointStyle: 'line', boxWidth: 24, padding: 14, font: { size: 11 } } },
+                    tooltip: {
+                        backgroundColor: 'rgba(17,24,39,0.93)', borderColor: 'rgba(55,65,81,0.6)', borderWidth: 1,
+                        titleColor: '#f9fafb', bodyColor: '#d1d5db', padding: 10, cornerRadius: 10,
+                        callbacks: { label: c => ` ${c.dataset.label}: ${Number(c.parsed.y).toExponential(3)}` }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: xLbl, color: '#6b7280', font: { size: 11 } }, ticks: { color: '#6b7280', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: 'rgba(55,65,81,0.5)' }, border: { color: 'rgba(75,85,99,0.4)' } },
+                    y: { title: { display: true, text: yLbl, color: '#6b7280', font: { size: 11 } }, ticks: { color: '#6b7280', font: { size: 10 } }, grid: { color: 'rgba(55,65,81,0.5)' }, border: { color: 'rgba(75,85,99,0.4)' } }
+                }
+            }
+        });
+    }
+
+    function submitData() {
+        const data = $('#parametersForm').serialize();
+        const tmax = parseFloat(document.getElementById('tmax')?.value || 900);
         document.getElementById('form-section').classList.add('hidden');
         document.getElementById('loader-wrapper').classList.remove('hidden');
         document.getElementById('loader-wrapper').classList.add('flex');
         document.getElementById('vall').textContent = Math.round(tmax / 1000 * 10) / 10;
 
-        // Animate progress bar
         let progress = 0;
         progressInterval = setInterval(() => {
             progress = Math.min(progress + 0.5, 90);
@@ -116,9 +175,7 @@
         }, 300);
 
         $.ajax({
-            url: '/result/',
-            type: 'POST',
-            data: data,
+            url: '/result/', type: 'POST', data: data,
             success: function (data) {
                 clearInterval(progressInterval);
                 document.getElementById('progress-bar').style.width = '100%';
@@ -138,60 +195,11 @@
         });
     }
 
-    function createCharts(data) {
-        const colors = ['rgba(96,165,250,1)', 'rgba(251,146,60,1)', 'rgba(167,139,250,1)'];
-
-        new Chart(document.getElementById('CmChart'), {
-            type: 'line',
-            data: {
-                labels: data.x,
-                datasets: [
-                    { label: `Cm (t=${data.tmax} s)`,          data: data.Cm_tmax,   borderColor: colors[0], backgroundColor: colors[0]+'33', borderWidth: 2, fill: false, pointRadius: 0 },
-                    { label: `Cm (t=${2*data.tmax/3|0} s)`,    data: data.Cm_2tmax3, borderColor: colors[1], backgroundColor: colors[1]+'33', borderWidth: 2, fill: false, pointRadius: 0 },
-                    { label: `Cm (t=${data.tmax/3|0} s)`,      data: data.Cm_tmax3,  borderColor: colors[2], backgroundColor: colors[2]+'33', borderWidth: 2, fill: false, pointRadius: 0 },
-                ]
-            },
-            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
-        });
-
-        new Chart(document.getElementById('CimChart'), {
-            type: 'line',
-            data: {
-                labels: data.x,
-                datasets: [
-                    { label: `Cim (t=${data.tmax} s)`,       data: data.Cim_tmax,   borderColor: colors[0], borderWidth: 2, fill: false, pointRadius: 0 },
-                    { label: `Cim (t=${2*data.tmax/3|0} s)`, data: data.Cim_2tmax3, borderColor: colors[1], borderWidth: 2, fill: false, pointRadius: 0 },
-                    { label: `Cim (t=${data.tmax/3|0} s)`,   data: data.Cim_tmax3,  borderColor: colors[2], borderWidth: 2, fill: false, pointRadius: 0 },
-                ]
-            },
-            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
-        });
-
-        new Chart(document.getElementById('CmTimeChart'), {
-            type: 'line',
-            data: {
-                labels: data.y,
-                datasets: [
-                    { label: 'Cm (x=0.1 m)', data: data.Cm2, borderColor: colors[0], borderWidth: 1.5, fill: false, pointRadius: 0 },
-                    { label: 'Cm (x=0.3 m)', data: data.Cm3, borderColor: colors[1], borderWidth: 1.5, fill: false, pointRadius: 0 },
-                    { label: 'Cm (x=0.5 m)', data: data.Cm4, borderColor: colors[2], borderWidth: 1.5, fill: false, pointRadius: 0 },
-                ]
-            },
-            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
-        });
-
-        new Chart(document.getElementById('CimTimeChart'), {
-            type: 'line',
-            data: {
-                labels: data.y,
-                datasets: [
-                    { label: 'Cim (x=0.1 m)', data: data.Cim2, borderColor: colors[0], borderWidth: 1.5, fill: false, pointRadius: 0 },
-                    { label: 'Cim (x=0.3 m)', data: data.Cim3, borderColor: colors[1], borderWidth: 1.5, fill: false, pointRadius: 0 },
-                    { label: 'Cim (x=0.5 m)', data: data.Cim4, borderColor: colors[2], borderWidth: 1.5, fill: false, pointRadius: 0 },
-                ]
-            },
-            options: { responsive: true, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } } }
-        });
+    function createCharts(d) {
+        mkChart('CmChart',      d.x, [{label:`Cm (t=${d.tmax} с)`,data:d.Cm_tmax},{label:`Cm (t=${2*d.tmax/3|0} с)`,data:d.Cm_2tmax3},{label:`Cm (t=${d.tmax/3|0} с)`,data:d.Cm_tmax3}],   'Координата (м)', 'C (м³/м³)');
+        mkChart('CimChart',     d.x, [{label:`Cim (t=${d.tmax} с)`,data:d.Cim_tmax},{label:`Cim (t=${2*d.tmax/3|0} с)`,data:d.Cim_2tmax3},{label:`Cim (t=${d.tmax/3|0} с)`,data:d.Cim_tmax3}], 'Координата (м)', 'C (м³/м³)');
+        mkChart('CmTimeChart',  d.y, [{label:'Cm (x=0.1 м)',data:d.Cm2},{label:'Cm (x=0.3 м)',data:d.Cm3},{label:'Cm (x=0.5 м)',data:d.Cm4}],   'Время (с)', 'C (м³/м³)');
+        mkChart('CimTimeChart', d.y, [{label:'Cim (x=0.1 м)',data:d.Cim2},{label:'Cim (x=0.3 м)',data:d.Cim3},{label:'Cim (x=0.5 м)',data:d.Cim4}], 'Время (с)', 'C (м³/м³)');
     }
 </script>
 {% endblock %}

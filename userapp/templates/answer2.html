@@ -44,11 +44,17 @@
     <div id="content-section" class="hidden mt-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Профили концентрации C по x</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-4 rounded-full bg-green-400 shrink-0"></span>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Профили концентрации C по x</h3>
+                </div>
                 <canvas id="distributionChart"></canvas>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Динамика концентрации C по времени</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-4 rounded-full bg-orange-400 shrink-0"></span>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Динамика концентрации C по времени</h3>
+                </div>
                 <canvas id="dynamicChart"></canvas>
             </div>
         </div>
@@ -66,12 +72,56 @@
 
 <script>
     let progressInterval;
-    const COLORS = ['rgba(239,68,68,1)','rgba(59,130,246,1)','rgba(34,197,94,1)'];
-    const CHART_OPTS = {
-        responsive: true,
-        plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } },
-        scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } } }
-    };
+
+    const PALETTE = [
+        ['#34d399','52,211,153'],
+        ['#60a5fa','96,165,250'],
+        ['#fb923c','251,146,60'],
+    ];
+
+    function grad(ctx, rgb) {
+        const g = ctx.createLinearGradient(0, 0, 0, 280);
+        g.addColorStop(0, `rgba(${rgb},0.18)`);
+        g.addColorStop(1, `rgba(${rgb},0)`);
+        return g;
+    }
+
+    function mkChart(id, labels, sets, xLbl, yLbl) {
+        const el = document.getElementById(id);
+        const ctx = el.getContext('2d');
+        new Chart(el, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: sets.map((s, i) => ({
+                    label: s.label, data: s.data,
+                    borderColor: PALETTE[i][0],
+                    backgroundColor: grad(ctx, PALETTE[i][1]),
+                    borderWidth: 2, fill: true, tension: 0.35,
+                    pointRadius: 0, pointHoverRadius: 4,
+                    pointHoverBackgroundColor: PALETTE[i][0],
+                    pointHoverBorderColor: '#111827', pointHoverBorderWidth: 2,
+                }))
+            },
+            options: {
+                responsive: true,
+                aspectRatio: 1.4,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { labels: { color: '#9ca3af', usePointStyle: true, pointStyle: 'line', boxWidth: 24, padding: 14, font: { size: 11 } } },
+                    tooltip: {
+                        backgroundColor: 'rgba(17,24,39,0.93)', borderColor: 'rgba(55,65,81,0.6)', borderWidth: 1,
+                        titleColor: '#f9fafb', bodyColor: '#d1d5db', padding: 10, cornerRadius: 10,
+                        callbacks: { label: c => ` ${c.dataset.label}: ${Number(c.parsed.y).toExponential(3)}` }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: xLbl, color: '#6b7280', font: { size: 11 } }, ticks: { color: '#6b7280', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: 'rgba(55,65,81,0.5)' }, border: { color: 'rgba(75,85,99,0.4)' } },
+                    y: { title: { display: true, text: yLbl, color: '#6b7280', font: { size: 11 } }, ticks: { color: '#6b7280', font: { size: 10 } }, grid: { color: 'rgba(55,65,81,0.5)' }, border: { color: 'rgba(75,85,99,0.4)' } }
+                }
+            }
+        });
+    }
 
     function submitData() {
         const data = $('#parametersForm').serialize();
@@ -108,35 +158,18 @@
         });
     }
 
-    function buildCharts(data) {
-        const x = data.x, y = data.y, C = data.C;
-        const tmax = y.length - 1;
-
-        new Chart(document.getElementById('distributionChart'), {
-            type: 'line',
-            data: {
-                labels: x,
-                datasets: [
-                    { label: `C(t=${tmax} s)`,       data: C[tmax],       borderColor: COLORS[0], borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
-                    { label: `C(t=${2*tmax/3|0} s)`, data: C[2*tmax/3|0], borderColor: COLORS[1], borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
-                    { label: `C(t=${tmax/3|0} s)`,   data: C[tmax/3|0],   borderColor: COLORS[2], borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
-                ]
-            },
-            options: { ...CHART_OPTS, scales: { x: { ...CHART_OPTS.scales.x, title: { display: true, text: 'Координата (м)', color: '#6b7280' } }, y: { ...CHART_OPTS.scales.y, title: { display: true, text: 'Концентрация (м³/м³)', color: '#6b7280' } } } }
-        });
-
-        new Chart(document.getElementById('dynamicChart'), {
-            type: 'line',
-            data: {
-                labels: y,
-                datasets: [
-                    { label: 'C (x=0.1 m)', data: data.C2, borderColor: 'rgba(168,85,247,1)',  borderWidth: 1.5, fill: false, tension: 0.1, pointRadius: 0 },
-                    { label: 'C (x=0.3 m)', data: data.C3, borderColor: 'rgba(251,146,60,1)',  borderWidth: 1.5, fill: false, tension: 0.1, pointRadius: 0 },
-                    { label: 'C (x=0.5 m)', data: data.C4, borderColor: 'rgba(161,140,105,1)', borderWidth: 1.5, fill: false, tension: 0.1, pointRadius: 0 },
-                ]
-            },
-            options: { ...CHART_OPTS, scales: { x: { ...CHART_OPTS.scales.x, title: { display: true, text: 'Время (с)', color: '#6b7280' } }, y: { ...CHART_OPTS.scales.y, title: { display: true, text: 'Концентрация (м³/м³)', color: '#6b7280' } } } }
-        });
+    function buildCharts(d) {
+        const C = d.C, tmax = d.y.length - 1;
+        mkChart('distributionChart', d.x, [
+            {label:`C (t=${tmax} с)`,       data: C[tmax]},
+            {label:`C (t=${2*tmax/3|0} с)`, data: C[2*tmax/3|0]},
+            {label:`C (t=${tmax/3|0} с)`,   data: C[tmax/3|0]},
+        ], 'Координата (м)', 'C (м³/м³)');
+        mkChart('dynamicChart', d.y, [
+            {label:'C (x=0.1 м)', data: d.C2},
+            {label:'C (x=0.3 м)', data: d.C3},
+            {label:'C (x=0.5 м)', data: d.C4},
+        ], 'Время (с)', 'C (м³/м³)');
     }
 </script>
 {% endblock %}
